@@ -7,3 +7,11 @@
 /rate-limiter/.idea/
 /service-orchestrator/.idea/
 /service-orchestrator/target/
+/design/distributed-cache/.idea/
+/design/distributed-cache/target/
+/design/distributed-event-bus/.idea/
+/design/distributed-event-bus/target/
+/design/rate-limiter/.idea/
+/design/rate-limiter/target/
+/design/service-orchestrator/.idea/
+/design/service-orchestrator/target/
