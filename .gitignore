@@ -1,0 +1,9 @@
+/.idea/
+/distributed-cache/.idea/
+/distributed-cache/target/
+/distributed-event-bus/.idea/
+/distributed-event-bus/target/
+/rate-limiter/target/
+/rate-limiter/.idea/
+/service-orchestrator/.idea/
+/service-orchestrator/target/
