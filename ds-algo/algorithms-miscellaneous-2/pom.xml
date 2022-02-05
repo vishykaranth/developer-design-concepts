@@ -47,6 +47,21 @@
             <version>5.8.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>pl.allegro.finance</groupId>
+            <artifactId>tradukisto</artifactId>
+            <version>${tradukisto.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-core</artifactId>
+            <version>${org.jgrapht.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-ext</artifactId>
+            <version>${org.jgrapht.ext.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
