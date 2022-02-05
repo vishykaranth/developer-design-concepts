@@ -52,23 +52,28 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>exec-maven-plugin</artifactId>
-                    <version>${exec-maven-plugin.version}</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
+<!--    <build>-->
+<!--        <pluginManagement>-->
+<!--            <plugins>-->
+<!--                <plugin>-->
+<!--                    <groupId>org.codehaus.mojo</groupId>-->
+<!--                    <artifactId>exec-maven-plugin</artifactId>-->
+<!--                    <version>${exec-maven-plugin.version}</version>-->
+<!--                </plugin>-->
+<!--            </plugins>-->
+<!--        </pluginManagement>-->
+<!--    </build>-->
+
+
 
     <properties>
         <commons-math3.version>3.6.1</commons-math3.version>
         <io.jenetics.version>3.7.0</io.jenetics.version>
         <org.assertj.core.version>3.9.0</org.assertj.core.version>
         <commons-codec.version>1.11</commons-codec.version>
+        <!-- necessary for intellij to function -->
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
 </project>

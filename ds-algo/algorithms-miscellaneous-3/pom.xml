@@ -91,6 +91,9 @@
         <jmh-generator.version>1.19</jmh-generator.version>
         <commons.lang3.version>3.8.1</commons.lang3.version>
         <JUnitParams.version>1.1.0</JUnitParams.version>
+        <!-- necessary for intellij to function -->
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
 </project>

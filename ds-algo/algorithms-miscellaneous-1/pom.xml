@@ -83,6 +83,9 @@
         <guava.version>27.0.1-jre</guava.version>
         <combinatoricslib3.version>3.3.0</combinatoricslib3.version>
         <cobertura.plugin.version>2.7</cobertura.plugin.version>
+        <!-- necessary for intellij to function -->
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
 </project>

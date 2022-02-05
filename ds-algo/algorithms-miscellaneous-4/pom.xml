@@ -8,11 +8,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>algorithms-miscellaneous-4</name>
 
-    <parent>
-        <groupId>com.baeldung</groupId>
-        <artifactId>parent-modules</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
-    </parent>
+    <groupId>algo</groupId>
 
     <dependencies>
         <dependency>
@@ -23,7 +19,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
+            <version>1.18.22</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
