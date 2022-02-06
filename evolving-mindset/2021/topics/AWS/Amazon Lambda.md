@@ -1,0 +1,32 @@
+## What exactly is Amazon Lambda? How does it work?
+- Before understanding what AWS lambda is… We need to know what serverless computing means….
+- Serverless allows to build, deploy & run applications & services without worring about Servers (Server operational responsibilites like OS & firmware updates, Server Maintainence & timely Upgrades, Optimizations, Security, Mitigating powerfailures are managed by cloud provider)
+- Example of Serverless Vs. Managed Service:
+- ![](images/Lambda%2001.png)
+- AWS Lambda:
+    - it is a computing service that lets to run our code without provisioning & managing AWS servers. 
+    - The demand for serverless computing is exponentially growing day-by-day due to the technology advancements.
+- ![](images/Lambda%2002.jpg)
+- ![](images/Lambda%2003.jpg)
+- Building blocks of AWS Lambda:
+    - Lambda Function: Our own piece of code & libraries we used, are created as a Lambda function.
+    - Log streams: helps monitoring & logging our lambda functions. We can also view its metrics on CloudWatch.
+    - Event source: Any AWS Service or Custom service that triggers our lambda function to perform its task.
+- ![](images/Lambda%2004.png)
+- Event sources that trigger lambda function are of two types:
+    - Automatic Invocation: Here Event source mapping is not needed. Ex.
+- ![](images/Lambda%2005.png)
+- Manual Invocation: Here we need to Map the event source with lambda function so that it can be triggered.
+- ![](images/Lambda%2006.png)
+- Features of AWS Lambda:
+    - Serverless (no need to manage servers),
+    - Event driven (triggered by other aws services)
+    - Bring your own code (upload your code and Lambda takes care of everything required to run it)
+    - helps to auto-scale your code with high availability
+    - Pay only for the compute time consumed.
+    - helps monitoring code performance in real time through CloudWatch
+
+### Lambda in a Nutshell:    
+- ![](images/Lambda%2007.png)
+- Note: Quick heads-up on Lamba vs Elastic Beanstalk
+- ![](images/Lambda%2008.png)

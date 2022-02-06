@@ -1,0 +1,27 @@
+## Devops 
+- DevOps is the 
+    - set of concepts, 
+    - practices, 
+    - tools, and 
+    - team organizational structures 
+    - that enable organizations to more quickly release new capabilities to their clients. 
+- Organizations that adopt DevOps are more easily able to release and monitor their microservices. 
+- They are able to respond quickly to new requirements, or to problems that occur in production. 
+- DevOps commonly includes the following processes:
+    - Agile practices (http://agilemanifesto.org/principles.html)
+    - Continuous integration
+    - Release automation
+    - Functional unit testing
+    - System integration testing
+    - Service and infrastructure monitoring
+- DevOps is a prerequisite to successfully adopting microservices
+    - Microservices architecture results in more frequent and
+    - greater numbers of smaller applications (microservices) being deployed. 
+    - DevOps is what enables you to do more frequent deployments, and 
+    - to scale to handle the growing number of new teams releasing microservices. 
+- C's
+    - Collaboration between “dev” and “ops”
+    - Culture
+    - Code everything - application and configuration
+    - Consistency - automation over documentation
+    - Continuous delivery       

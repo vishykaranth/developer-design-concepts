@@ -1,0 +1,17 @@
+- Spring Boot is the core technology used in our microservice implementation. 
+- Spring Boot greatly simplifies microservice development by simplifying the core tasks of building REST-based microservices. 
+- Spring Boot also greatly simplifies mapping HTTP style verbs (GET, PUT, POST, and DELETE) to URLs and 
+    - the serialization of the JSON protocol to and from Java objects, 
+    - as well as the mapping of Java exceptions back to standard HTTP error codes.
+    
+- Spring Cloud Config handles the management of application configuration data through a centralized service 
+    - so your application configuration data (particularly your environment specific configuration data) is cleanly separated from your deployed microservice. 
+- This ensures that no matter how many microservice instances you bring up, they’ll always have the same configuration. 
+- Spring Cloud Config has its own property management repository, but also integrates with open source projects such as the following:
+    - Git—Git (https://git-scm.com/) is an open source version control system that allows you to manage and track changes to any type of text file. 
+    - Spring Cloud Config can integrate with a Git-backed repository and read the application’s configuration data out of the repository.
+    - Consul—Consul (https://www.consul.io/) is an open source service discovery tool that allows service instances to register themselves with the service.
+    - Service clients can then ask Consul where the service instances are located. 
+    - Consul also includes key-value store based database that can be used by Spring Cloud Config to store application configuration data.
+    - Eureka—Eureka (https://github.com/Netflix/eureka) is an open source Netflix project that, like Consul, offers similar service discovery capabilities. 
+    - Eureka also has a key-value database that can be used with Spring Cloud Config.    

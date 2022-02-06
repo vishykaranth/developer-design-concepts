@@ -1,0 +1,783 @@
+## Kubernetes - AWS 
+
+### Course Overview
+- Primer on Docker and Kubernetes. 
+- Build up EC2 instances, We'll build a cluster on that. 
+- Then we look at a fully managed service from AWS - the Elastic Container Service. 
+- It's good to understand what Amazon has to offer in terms of its services, so that you have more flexibility to decide on what should be your deployment mechanism for a Kubernetes cluster. 
+- And then finally, we look at some advanced concepts, such as high availability, disaster recovery etc. 
+- Why do you want to learn about Kubernetes clusters? 
+- Well, if you actually look at how the world is going today in terms of deploying applications, then you will see containers, and especially dock containers. 
+- everybody is going in terms of that micro services architecture that looks at working with containers. 
+- And when you work with containers you have to look at orchestration. 
+- How do you manage these containers? 
+- How do you monitor the containers? 
+- And then obviously, this all links to your DevOps strategy for your applications in your organization. 
+
+### What Is Docker?
+- An application, which had a web tier, an application tier, and a database tier, you would normally have physical servers to deploy that application infrastructure. 
+- Probably have one physical server for your web tier, one physical server for your application tier, and another physical server for your database tier. 
+- Now as time went by, in order to make good use of the underlying resources you had the evolution of virtual servers. 
+- On a physical server you could then host a VM for your web tier, another VM for your application tier, and another VM for your database tier. 
+- To make even more better utilization of the underlying resources, you then had containers. 
+- On a virtual server you could have a separate container for your web tier, a separate container for your application tier, and then a separate container for your database tier. 
+- Docker is a tool that's designed to create, deploy, and run applications by using containers. 
+- Docker is the most popular container tool out there. 
+- One of the key benefits of Docker is that it's open source, so you have a large community that actually uploads these images, these Docker images onto a place known as Docker Hub. 
+- Docker Hub is a global place where you can actually upload and download various images to create containers. 
+- And finally, these containers, since it's so easy to actually move between virtual machines, it's used in a lot of application infrastructure scenarios. 
+- You could have a container running on one VM and then easily move it to the other virtual machine. 
+
+### Working with Images and Containers
+- What exactly are images? 
+    - Images are like predefined templates. 
+    - You have images available for the different OSes. 
+    - E.g.  for different flavors of Linux, Ubuntu, or Red Hat. 
+    - You also have images available for Windows. 
+- You can actually download these images from a place called Docker Hub, and then run them as containers. 
+- You also have images available for the various database systems and application servers. 
+- You have Images for MongoDB, for MySQL, for Apache. 
+- You can create containers out of images. 
+- You download the images form Docker Hub, and then you create containers out of them. 
+- In our application example, we're going to be using two images. 
+    - First we're going to be using the Ubuntu image. 
+    - This will be used to host our Apache server. 
+    - We'll be hosting a PHP sample page on this server. 
+    - We are also going to be using the MySQL image. 
+    - We're going to be creating a MySQL container that will be used as our database. 
+    - We're going to be using a custom file in the beginning just to showcase how we are going to be working with our Ubuntu, plus Apache, plus PHP. 
+    - Using Dockerfile to create our custom image. 
+    - This custom image will actually install Apache and all the associated models for hosting PHP and for connecting to a MySQL database. 
+    - We'll have a PHP sample page, which will actually connect to the MySQL database. 
+- We have an on-premises server. 
+- Let's start working with images and containers on that server. 
+- Here we are in our server session. 
+- This is a hosting an Ubuntu OS. We've already gone ahead and installed Docker. 
+- For installing Docker the instructions are available in the documentation for Docker. 
+- To get about seeing how images and containers work. 
+    - We are going to pull the Ubuntu image from Docker Hub, using the pull command 
+    - Pull command will pull the Ubuntu image from Docker Hub, download it on the local system. 
+- Now, when it's actually pulling out the image from Docker Hub, it pulls all the layers. 
+    - The different layers that actually make up a particular image. 
+    - It downloads these layers together, bundles it in an image. 
+    - Then we can actually go ahead and create a container out of this image. 
+- Now, once the download is complete, 
+    - if you issue the docker images command you should be able to see the ubuntu image has now been downloaded onto your local system. 
+    - Let's go ahead and create a container out of this image. 
+- For creating a container we're going to use the docker run command. 
+    - Now, the d, i and t are separate options. 
+        - The d is to run it as a daemon process in the background. 
+        - The i is for interactive mode. 
+        - And t is to attach a sudo terminal to the container. 
+    - This is so that it can actually run in the background. 
+- We give a name to our container. And then we specify the ubuntu image, you know, to create a container put of this image. 
+- Let's go ahead and create the container. 
+- What it does is it returns the ID of the container. 
+- You can then run the docker ps command, this is used to see the running containers on your system. 
+- Next, we use the docker attach, if you want to attach yourself to a running container, you can use the docker attach. 
+- You need to mention the short-form of the container ID, which we can put as 87, since that's the first two digits of the container ID. 
+- And you will now be attached to the Ubuntu container. 
+    - You're actually in the container itself. 
+    - You're not now on the host OS. 
+    - You are actually in the container. 
+- Whatever commands you issue, it will actually be issued in this particular container. 
+- In this demo we just want to see and have a primer on how images in containers work. 
+Creating the Web Container
+- We're going to build an image out of this Dockerfile. 
+- Let's go ahead to our on-premises server. 
+- Let's see how to work with a web container. 
+- here we are back on our server, where we've all installed Docker. 
+- We've already downloaded the latest Ubuntu image. 
+- Now, if we do an ls now, over here we've already gone ahead and copied the Dockerfile. Let's look at the contents of this Dockerfile. 
+- first we're running an apt-get update. 
+- This is to update the container itself. 
+- Then we're going to install the following packages. 
+- We're going to install apache2 for hosting the web server. 
+- We're going to install php. 
+- And we're going to install the necessary libraries for php to ensure that it works on apache. 
+- And we're going to install the libraries, which will be used to connect to our database mysql server. 
+- We're exposing port 80, so that we can actually get or visit the Apache website from the outside world. 
+- We're going to copy a sample demo.php file from a source folder. 
+- I'm going to show this in a moment. And then we're going to run one of the Apache commands in the foreground. 
+- This is to make sure that the container runs in the background. 
+- And then we can access that container from outside. 
+- let me go on to the source folder. 
+- We have already created a src folder.
+-  In the src folder, we have a demo.php file. 
+- It's a very simple PHP file at the moment. 
+- It has says Hello World! we're going to be actually using this demo.php file. So now, let's go ahead and do the first step. 
+- Let's go ahead and build our custom image using the Dockerfile. 
+    - here we mentioned what will be the name of the image. 
+    - It will be myapp. 
+- So now, currently in the background, it's actually building this custom image. It's ensuring all the packages are in place. 
+- Now, once the entire image has been built, we can actually start building a container out of this image. we're again going to use the docker run command. 
+- But this time we're going to specify the name of our image. 
+- We are going to ensure that we expose port 80. let's go ahead and create a container out of this image. 
+- Let's again see if this image is running in the background. 
+- we can see that this container is up and running. 
+- You can see the port that it's available on. 
+- Now, every container works on the network. 
+- Docker creates its own internal network for communication. 
+- there'll be an IP address, which is allocated to this Docker container. 
+- You can use the sudo docker inspect command to inspect the running container. 
+- And here you can see that you have an IP address of 172.17.02.2. 
+- let's just issue the curl command for the sample.php, our demo PHP page on Apache. 
+- you have gone ahead and cleared the screen. 
+- Now, let's issue the curl command. Now, let's put the IP address of the container. Let's see our demo.php page.
+-  And let's see if it's working. 
+- we can see our demo.php page is working. 
+- We are getting the desired output. 
+- And remember now, this is running out of our container. 
+- We have not installed anything locally. 
+- The output is coming from the Apache that we've installed in the Ubuntu container. 
+- here our web container is set up. 
+- So now, let's go on to our next video, in which we're going to go ahead and create a database container.
+
+### Getting the Networking Right
+- Hi and welcome back. Now in this video, we are going to go ahead and create our database container. 
+- So we are going to use the MySQL container. We're going to download also the MySQL client on the host machine. We're going to create a database. We're going to create a table. We're going to insert some data into the table. And then we're going to ensure our PHP sample page can actually fetch the data from this database container. 
+- let's now go ahead to our host system and work with the MySQL container. 
+- here I'm back on the host system. 
+- Let's first go ahead and pull the MySQL image from Docker Hub. 
+- So again, this is going to pull all the layers that are necessary to ensure that MySQL is running on this machine, so we can actually use the image and spin up a container. let's wait till the download is complete. now the download is complete. 
+- Let's now issue the docker run command. 
+- Again, we're giving a name for our container. 
+- We are also passing in the ROOT_PASSWORD, which will be used to connect to MySQL. 
+- And then we're going to run it as a daemon process in the background. And we're going to be using them in the image. 
+- So now, as usual, it's returning the container ID. 
+- we've now run the MySQL container. 
+- Now let's update our system and download and install the MySQL client on the host VM, which will be used to connect to our database container. 
+- let's first issue the apt-get update command. 
+- Once this is done, let's go ahead and install the MySQL client. 
+- So let's come back once the client is installed. 
+- MySQL client has finished downloading. Let's just clear the screen. Now let's go ahead. 
+- And first, before actually inspecting the package, let's go ahead and find the container ID. 
+- let's issue the docker ps command to see the running containers. 
+- So what we have first is our Ubuntu container. 
+- And then we have our MySQL container. 
+- So we've got now the container ID. 
+- Now let's go ahead and do a docker inspect. 
+- in the docker inspect we can actually inspect the running container. 
+- that's going to be d1. 
+- And then we can actually get the IP address of the container. 
+    - we've got the IP address as 172.17.0.3. 
+- let's now connect using MySQL client to this IP. 
+- let's connect to the MySQL database. 
+- Let's enter the password. 
+- we are now connected to the MySQL instance in our container. let's now go ahead and create a database, create a table, insert some data. 
+- First, let's create the database. 
+- Let's then use the database. 
+- Let's then create the table. 
+- We're creating a customer table with an id column and a name column. And now let's insert some data into this table. 
+- Right, so now we've got two entries in the customers table in a database called app in our MySQL container. 
+- Now that our data has been inserted, you can actually exit from mysql. 
+- Right? we're back in our host VM. 
+- Let's just clear the screen. Alright? now we have two containers running. 
+- One is myapp another one is mysql. 
+- Now what we have also done in the background is that we have actually gone ahead and put a sample.php file. 
+- let's go on to the src folder. 
+- And let's do a tail off the Sample.php file. 
+- let's see the Sample.php file. 
+- what this is doing is that this is actually making sure that it's getting some data from MySQL table, from the PHP page, and then displaying it. 
+- this is actually going to connect to our MySQL database, and then get those rows accordingly. Now, when you actually put the Sample.php file in your source folder if you made a change to the source folder, you need to ensure that you again build the custom image using the Dockerfile, and then create the container again. 
+- now we've already gone ahead and done this. now if we do a sudo docker ps, we actually now have both our containers running. But now the app container, which is our web container, has the Sample.php file. 
+- let's do now a curl command using the Sample.php file. Right, so now we're taking the internal IP of our Apache, that's our myapp container, and we're seeing the Sample.php file. Let's press Enter. 
+- now see what it's doing is that it's actually getting the ID and the name of both the customers in the customer table in our app database on our mysql container. 
+- now here we have a proper web container running connecting to a proper database container. Now in this video, I just thought we'll actually get some aspects when it comes to networking. 
+- these are just some quick tips if you're actually working with networking with Docker containers. 
+- the first thing you need to understand is that when you're working with Docker the Docker daemons use an internal network. 
+- this how the containers actually network communicate with each other. We've seen that they all have their own IP address. 
+- They have a gateway. just like proper network in Docker containers. 
+- Now, you can also define your own user networks. 
+- You can define the type of networks that you want - if you want a bridge network or an overlay network. 
+- Now, some other aspects when it comes to networking. 
+- one key thing to remember is that by default the community doesn't expose any of the ports. 
+- if you have a web server running, you've seen in a Docker file we've used the expose command to ensure that we expose the port to the outside world or to other containers running in the network. 
+- the first part is to expose the ports on your container. 
+- The next thing is to publish them. 
+- if you want to actually, you know, get or expose these ports to the outside world, then you need to also publish this port, so it can be mapped to the host. 
+- This is obviously essential for web containers. 
+- Since you do want to browse to the web pages in the web containers, it is important to publish these ports to the outside world. 
+- Now, it's not necessary for database containers. 
+- Normally database containers, as seen in our example, will only talk to the web containers. 
+- you don't need to actually publish the port. 
+- You can expose a port to the web containers in the container networking itself, but it's not necessary to publish the post to the outside world. 
+- Now let's move on to our next video, which is Working with Volumes.
+
+### Working with Volumes, Images, and the Container Registry
+- Now, we're going to look at some quick tips when it comes to working with volumes in Docker containers. 
+- Now, whenever data gets into a container it's only available when it runs. if you want to actually possess data for your container, then you need to use Docker volumes or you need to use bind mounts. 
+- Now, normally the volumes are stored in the /var/lib/docker/volumes on Linux flavor OSS. 
+- Now, bind mounts can be used anywhere on the whole system. these are the two types of ways you can actually persist data on to the host OS. 
+- Now, when it comes to container volumes the advantages of volumes over bind mounts are they easy to back up. they're in that particular location. 
+- You can easily manage them using the Docker API or the CLI. 
+- It works both on Windows and Linux platforms. We can safely share these volumes among various containers. 
+- these are some of the advantages when working with container volumes. 
+- Now, by default we've seen that when we actually pull images using Docker, they actually get pulled from a cloud-based registry service known as Docker Hub. 
+- this is where you can actually put images, you can pull images accordingly. 
+- Now, you can also use Docker Hub to automate the creation of images whenever source code changes. 
+- when you make a source code change, automatically it will create an image in Docker Hub. 
+- Docker Hub can also be used for this purpose. 
+- But if you wanted to have your own private registry, say on your on-premises environment, what you can do is that you can actually use a software from Docker itself, known as Docker Trusted Registry. 
+- Here, you can manage your own private registry service. The main advantage is that you have full control over where the images are stored. 
+- Now, in Docker Hub you push the images, you pull them, but you don't know exactly where those images are stored. 
+- Because that's under the control of Docker itself. 
+- if you want full control of your own images, where they are stored, then you should be using your own private registry. 
+- I said you have the entire control also of who can upload and pull images. So now, let's move on to our next video. 
+- We have done the primer on Docker, right? 
+- we've seen how to work with Docker, the images, the containers. We have seen a bit about the volumes, networking. 
+- These are important aspects. 
+- And the registry. 
+- Now, let's move on to container orchestration in Kubernetes.
+
+### Deployment Options in Kubernetes
+- Hi and welcome back. Now, in this video we're going to look at what is Kubernetes. Kubernetes is an open source system. It's used for managing containers. in an organization, in a large organization, if you are planning to go and deploy your applications using containers based on the number of containers you have and the requirements such as auto scaling, this can become quite cumbersome and complex. And hence, you can actually use these container orchestration systems, such as Kubernetes. 
+- one of the important things is that it helps in easy deployment of your container-based applications. It helps in easy maintenance. it's easy to bring up a container, to bring down a container, to transport containers onto different systems. It allows for easy scaling of applications. with a single command line you can actually scale up your application and deploy more containers. 
+- Now, in a nutshell, the architecture of Kubernetes is such so you have something known as the master, the Kubernetes master. 
+- This is the one that actually controls the entire Kubernetes cluster. You then have Nodes. 
+- Nodes is where your application actually runs. 
+- what happens on the Master, you will issue commands saying that please execute this deployment or container-based deployment. 
+- Then what the Master will do is that it it will actually take your containers and deploy it on the Nodes. 
+- Now, on the Node itself a deployment is done via pods. 
+- a Pod is like an encapsulation of containers. 
+- And that pertains to your deployment. 
+- in the Pod itself you could have multiple containers for your application. 
+- you could have one Container, which is pertinent to your web deployment, and you could have another Container which is pertinent to your database deployment. 
+- Now, Kubernetes is the most widely-used container orchestration tool. 
+- And in the last two years, I've actually seen this being adopted by a lot of cloud-based vendors. 
+- you have Kubernetes support on SEO, on Google Cloud Engine, and on AWS. 
+- This is also adopted by various organizations. 
+- It has a large community - and I'm talking about support and development. 
+- And that is what makes this one of the most commonly-used tools out there for container orchestration. 
+- Let's look at the Different Deployment Options there are in Kubernetes. 
+    - Now, the first deployment option is obviously building it completely from scratch. 
+    - If you are someone who really wants to know how Kubernetes works, I recommend you actually build the cluster from scratch. 
+    - But if you are someone who really wants to start working on Kubernetes right away, and you don't want to have the headache of building it, then there are tools which can automate that build for you. 
+    - Now, when you're building it from scratch, the first thing you need to do is install Docker, because Kubernetes internally works on Docker. 
+    - After you install Docker, you need to install three tools and these are pertinent to Kubernetes. 
+    - the first is kubeadm, then you have kubectl, and then you have the kubelet. 
+        - the kubeadm is actually used for building your cluster the first time. It can also be used to reset your cluster. 
+        - The kubectl is actually used for management. 
+        - it's a command-line interface that's actually used to manage the deployment of your containers. 
+        - And the kubelet is the process that actually runs on the individual nodes, and ensures that your pods and deployments works as they should. 
+- from scratch you actually build your entire cluster. 
+- And then you attach the cluster nodes to the master. 
+- remember in the earlier chapter, in the earlier video, we had seen that you have the master. 
+- That's the one that actually controls the nodes on which your pods and deployments run. 
+- Now, obviously if you don't want the headache of building your Kubernetes from scratch, you can use tools such as Conjure-up. 
+- this allows you to provision clusters. 
+- It helps you provision clusters on cloud platforms as well. 
+- what it does is that it does most the heavy lifting for you. 
+- When you use Conjure-up it actually, you know, gives you an interface. 
+- And in that interface you can choose where do you want deploy Kubernetes. 
+- And that's done automatically for you. 
+- You then specify what platform you want. 
+- And then it will go ahead and deploy it for you.
+-  If you want, you can also use Minikube. 
+- This is an another tool. This can be used to build a single node cluster on your desktop. if you want to get a Kubernetes single node cluster up and running quickly or on your desktop you can use Minikube. 
+- For managing clusters, Kubernetes clusters, you also have Kops. 
+- These form and manage clusters on cloud platforms. 
+- And when we're actually going on to AWS in our subsequent videos and building and working with Kubernetes clusters, we're going to be using Kops. 
+- Now, when it comes to cloud options... 
+    - many of the cloud vendors I said over the past couple of years have now put that built-in support for Kubernetes. 
+    - when it comes to Amazon AWS, they have the Elastic Container Service for Kubernetes. 
+    - Azure has AKS managed Kubernetes platform. 
+    - And Google has the Google Kubernetes Engine. 
+- So now, let's go on to our next video. We're just quickly going to go through Building a Kubernetes Cluster from scratch.
+
+### Building a Kubernetes Cluster
+- Hi and welcome back. So now, in this video, we're going to look at Building a Kubernetes cluster. we're actually going to build it from scratch. 
+- But we'll do a lot of the heavy lifting work prior. we'll just install the three tools that are required to build your cluster: kubeadm, kubectl and kubelet. 
+- We are just going to build the cluster and then attach the cluster nodes. 
+- let's now go on to our on-premise servers, our Ubuntu servers, and see how to do this. So now, currently I have two servers. 
+- first is our master. 
+- This is where the Kubernetes master is going to run. And then I have another called the minion or the node. 
+- now the minion or the node is actually going to be used to run our workload. the master will actually issue the command to deploy our containers, and that will be executed on the minion. Now what I've already gone ahead and done is that I have already installed Docker on both of these servers. 
+- on both the master and the nodes you need to show first that Docker is installed. Then you can go to the documentation for Docker and see how to install Docker for the Kubernetes master and node. 
+- Now let's go on to the master. 
+- And let's install the required tools for Kubernetes. 
+- So now, I've currently logged on has root. 
+- I'm going to do an, you know, update to get all the packages and install the apt-transport-https layer. this is currently doing it in the background. 
+- Now when this is done, what will do is that will actually add in the set of keys and ensure the repository can be reachable for installing Kubernetes. 
+- Then we'll issue an apt-get update to ensure the system is up to date. Once this is done, we're going to install the three tools. 
+- we have kubelet, kubeadm, and kubectl. 
+- it's going to now install it. 
+- Let's come back once the installation is complete. 
+- Now once the installation is done, let me just clear the screen. 
+- For Kubernetes we to ensure that the swap is off on your Linux machine. 
+- And now we're going to use the install kubeadm tool to build our cluster.
+-  Now we're specifying here a pod-network. 
+- We're going to be installing a network. 
+- And then we're going to skip the preflight-checks. 
+- let's use the kubeadm tool to install the Kubernetes master. 
+- now this will take some time, because it needs to download something known has the control plane to ensure that the Kubernetes master is working. 
+- We did run some additional commands to ensure that it will actually work. 
+- You also have this kubeadm join. 
+- this will be used on your kubernetes node to join it to the master. 
+- But now the first thing we need to do is that we need to actually now go back to a normal user, right? 
+- in a normal user I need to run these commands, which are given over here as a regular user. 
+- We just need to copy these commands and execute them. 
+- Now we will set up our network. 
+- Now for deploying a pod network... this pod network is required for the pods to run on your nodes. There are a variety of networks available. 
+- I'm going to be using something known as calico. 
+- for that you download the yaml file, and then apply it on the Kubernetes cluster. I'm going to do that right now. it's actually downloading this yaml file, and then making sure the network is set up. Right, so this is also done. 
+- what we need to do now is let's go to our node. Log in as a root. 
+- And then join to the master. now it's saying the node has joined the cluster successfully. 
+- Now let's go to the master. 
+- Let's clear the screen. 
+- Now you can do a kubectl get nodes. 
+- now you can see currently that the STATUS of the nodes are NotReady. it takes some time for the nodes to become Ready. 
+- let's come back once both the nodes have a STATUS of Ready. 
+- now here we are back. I issued the command a couple of times just to make sure that both the nodes are Ready. 
+- now you have the master and the minion both in the Ready STATUS. 
+- And that's it. 
+- You now have your Kubernetes cluster set up with a master and a node. 
+- Now let's go on to our next video, which is Deploying Your Application on the Kubernetes cluster.
+
+### Deploying Your Application
+- Hi and welcome back. So now, in this video we'll just quickly look at how to deploy a simple application. you have to again use a kubectl command to create deployment. this deployment will actually take images and then deploy the containers accordingly to the nodes. You will specify the number of instances. if you want more number of instances to support your deployment, you can specify that using the kubectl command. If you have custom images - so when we were looking at how to use Docker in our earlier videos we had custom images. if you want to work with those, you can show first you push them to Docker Hub. Then the Kubernetes nodes will actually take those custom images and then deploy them accordingly. So now, let's go on to our Kubernetes master. 
+- Let's see how we can just quickly deploy an nginx image. 
+- here we are back on a master Kubernetes node. 
+- Now, if you want to run a deployment, you can specify this command, so the kubectl run. 
+- Now, what this is doing is that it's specifying an image of nginx. this will actually download the nginx image. 
+- It will actually give it a name of my-nginx. replica means 1. 
+- That means we only deploying one instance of it. 
+- If you want more number of instances, you can change the number of replicas. 
+- And the port 80, we just mention that to expose that particular port. 
+- let's now go ahead and run this. 
+- So now, what this is doing is that it's actually now taking this and deploying it on a Kubernetes node. 
+- that's the node we actually join to our Kubernetes master. 
+- Now, I did mention that all of these deployments are deployed as pods. 
+- if you want to see the pods running in your cluster use a kubectl command get pods. 
+- And this will actually give you the code the pods actually running on your cluster. currently we just have one. 
+- it's currently in the status of ContainerCreating. 
+- it's actually downloading the nginx image from Docker, and then it's going to create that container. 
+- Let's come back after couple of minutes, after the container has been created. 
+- So now after a couple of minutes, when you issue the command again to get the pods, you will actually see now that the pod is in the Running STATUS. 
+- now you have an nginx container running on your Kubernetes node. 
+- Now, in the next chapter we'll see how to expose this as a service. 
+- Let's now move on to the next video, where we'll actually see Working with Services, and exposing our nginx pod, which we just now deployed as a service.
+
+### Working with Services
+- Hi and welcome back. 
+- Now, in this video, we're going to look at Working with Services. Now, in the earlier video, we've seen how we have actually deployed a pod on to a Kubernetes node. But most of the time if you are deploying, for example, a web server you want to expose that pod deployment. Because you want to actually access that content, which is given by the web application. 
+- then what happens is we need to expose it as a service. 
+- And this can be done using the kubectl command. 
+- let's quickly go through our Kubernetes master. And let's see how we can use the kubectl command to expose our nginx deployment, which we have seen in the last chapter as a service. now we are using the kubectl expose command. 
+- And we are specifying what deployment we want to expose as a service. We're putting the type as NotePort. 
+- And we're giving a name for our service. 
+- let's go ahead and execute the command. 
+- So now, we have the app-service, which is saying as exposed. 
+- And once the service has been exposed, what you can then do is that you can actually describe the service. 
+- you can use it again using the kubectl command. 
+- So now, once the service has launched, what you can do is that you can use the kubectl describe command to describe the service. 
+- Why you need this is because you need the cluster IP. 
+- this IP will be actually used to now access that service. So now, if we do a curl command, and put the IP. 
+- Right, so now you're actually getting the nginx homepage. 
+- here you see now that your pod is now exposed as a service. And now you can actually access that service via an IP. 
+- Monitoring your cluster. 
+- Now, one of the options you have is something known as a tool as Heapster. this is a tool to work with all types of Kubernetes setup. 
+- if you want something that is standard or across you can use Heapster. 
+- Another very popular open source monitoring tool is known as Prometheus. If you want to go commercial, then there are other tools available. 
+- One of the popular monitoring tools is Datadog, and another one is New Relic. 
+- Now, there are a lot of monitoring options available out there. 
+- There are even monitoring options available if you are deploying on clouds. 
+- If you're deploying on a particular cloud platform, you would have metrics and monitoring available with the cloud platform itself. 
+- They would have tools on the cloud available for monitoring your Kubernetes setup.
+-  Now, choosing which tool you want to use again depends on your requirement. 
+    - How much do you want monitor? 
+    - How big is your setup? 
+    - How critical is your setup? 
+- all of this comes into account when you are choosing the right tool for monitoring. 
+- that marks it for this section. 
+- Now, let's move on to the next section, where we will actually build a Kubernetes cluster on AWS EC2.
+
+### Building a Kubernetes Cluster on EC2 Using Kops
+- Hi and welcome to this section on working with Kubernetes on AWS. So now, in this particular section, we are actually going to look at building a Kubernetes cluster on AWS EC2. let's move on to our first video, which is going through how we can actually build a cluster on EC2. Now, we're going to be using AWS for building our Kubernetes cluster. Now, if you want, you can build a cluster manually. you can deploy your EC2 instances. You can use the similar mechanisms that we used in the earlier videos to create your entire Kubernetes cluster manually. But this can be a time-consuming effort. There are tools out there which can automate the entire process. for the purpose of our demo, we're going to be using a tool known as Kops. this is a popular tool for deploying Kubernetes clusters. 
+- One of the biggest advantages of using this tool is its ease of use. You just define some configuration files for your Kubernetes clusters. And then you're good to go. this can be easily used to deploy clusters. You can also use the Kops tool to update your clusters. We're going to be looking into this in our subsequent videos. 
+- in this video we're going to actually deploy a cluster. And then we're going to see how to update the clusters accordingly. 
+- Now, one thing to note about Kops is that it completely works on DNS for identification. 
+- in AWS the DNS utility is route 53. 
+- you need to ensure that one of the prerequisites is that you have a domain name already defined in route 53, because the Kops tool uses the DNS to ensure that the Kubernetes cluster can be identified from the outside world. 
+- you need to ensure that a domain name is defined in route 53. 
+- So now, what are the steps to follow? 
+- obviously the first thing if you're going to follow along - have an AWS account. Decide on the region you want to deploy your Kubernetes cluster. 
+- Then we need to create one instance. this instance will be used to deploy our cluster. We use in Ubuntu instance. 
+- Now, in order to use Kops one of the prerequisites is that you need to install kubectl.
+-  first we need to install the tool. 
+- Once we get that tool, then we can download Kops. 
+- Now, some further steps. 
+- Now, to ensure that this Ubuntu source instance can actually build the Kubernetes clusters on AWS, you need to ensure that you have the role which has the desired permissions to create those instances. 
+- this role will have the required privileges. 
+- We'll then create an S3 bucket. 
+    - This S3 bucket is used to store the artifacts required for the cluster itself. 
+    - Next, we define the cluster configuration. 
+    - this is a configuration file. 
+    - This defines what will be the instance type for your nodes, how many nodes do you want, what is the instance type for your master node, how many masters do you want etc. 
+- You then review the cluster configuration. 
+- And then you create the cluster using the Kops tool. 
+- So now, let's go to the AWS console. 
+- And let's go through this entire series of steps to build our Kubernetes cluster using Kops. 
+- So now, here we are in the AWS console. 
+- Now, first I have route 53 open. 
+- Now, I did mention in the slides that Kops uses DNS for identification of the Kubernetes clusters. 
+- you need to ensure that one domain name is always defined in route 53. 
+- I already have one defined over here. 
+- actually I registered this domain with godaddy.com. 
+- And then [Inaudible] define the domain over here in route 53 as a hosted zone. 
+- I've ensured the named server records are appeared in GoDaddy, so that whenever we actually go to this domain cloudportalhub.com, we can actually go through route 53. 
+- ensure that this is already defined beforehand. 
+- This does take time. 
+- That's why I've done this before this exercise. 
+- We just have to ensure our domain name is defined in route 53. 
+- Next, I also have one bucket defined. 
+- the name of the bucket is clusters.cloudportalhub.com. 
+- you can create this bucket beforehand. 
+- I have created the S3 bucket in the Singapore region, this is the same region in which I'm going to host my Kubernetes cluster. 
+- The next step what we need to do is that we need to launch an instance. 
+- this is our source instance, in which we are going to install kubectl and get the Kops tool. 
+- And then from here we're going to use the Kops tool to actually create our Kubernetes cluster. 
+- let's go ahead and launch an instance. 
+- Now, I'm going to be using and Ubuntu instance for this demo. 
+- I'll use a t2.medium. 
+- I'll leave this in the DefaultVPC. 
+- And I just want one instance. 
+- I'll leave the storage as it is. I can add a name tag. 
+- In the Security group, I'll create a new Security group. 
+- I'll ensure that there is permissions to actually log on to this instance in that Security group. 
+- I'll go to Review and Launch. 
+- If you want, create a new key pair if you don't have one. 
+- I already have the key pair, so I'll I acknowledge I have the key pair. 
+- And then let me go ahead and launch the instance. 
+- Now, let's wait till the instance is launched. And then let's log in to the instance using putty. 
+- once the server has been launched, it's in the Running State. 
+- And your Status Checks are complete, you can actually log in to the instance. 
+- here I am logged in to the ubuntu instance. 
+- Now, I'm going to go in as the root. 
+- And then we're going to follow the steps for installing kubectl. 
+- let's first do an apt-get update and install the transport layer. 
+- Once this is done, let's go ahead and add the required keys. 
+- Next, let's ensure to add this as part of our source packages in our Ubuntu server. 
+- Let's issue an apt-get update. 
+- this will update our system with the required packages. 
+- And then let's go ahead and install kubectl. 
+- Now, once kubectl is done, let's go ahead and download Kops. 
+- In the meantime, what we can do is that let's go on and add an IAM role. 
+    - IAM role needs to be attached to our EC2 instance. 
+    - That EC2 will then have permissions to create additional EC2 instances. 
+    - This will be used as our masters and nodes in our Kubernetes cluster. 
+    - It's always a good practice to have IAM roles attached to your EC2 instances, instead of embedding your AWS keys. 
+    - let's go ahead and add the role accordingly. 
+    - let's go to our Security Credentials. 
+    - And then let's go on to Roles. 
+    - Let's create a new role. 
+    - this is for an AWS service and for EC2. 
+    - let's choose EC2. 
+    - Let's go on to Next to add permissions. 
+    - I'll add the AdministratorAccess permission given to this just for the purpose of this demo.
+    - Let's go on to Next to Review. Let's give this name as Kubernetes for our Role name. 
+    - And let's go ahead and create the role. 
+    - Now, what you can do that you can then go to the EC2 management console. 
+    - In our source server, go on to Actions. 
+    - And then you can go on to Instance Settings. 
+    - And then say Attach/Replace IAM Role. 
+- You should be able to see your new role, Kubernetes. 
+- Choose that role and click on Apply. 
+- So now, this EC2 instance... Let me again just... So now, this instance will actually have the permissions to create additional instances. 
+- It will also have permissions to view our S3 bucket. 
+- Remember, I said that the S3 bucket is used for the artifacts for Kops. 
+- It also needs permissions for route 53. 
+- all of these permissions have to be given to this source EC2 instance. 
+- Now, once the download is complete, let's add the required permissions to the Kops folder. 
+- And then when this is done, you can actually go back to your normal user. 
+- Let's also issue the ssh-keygen to put the public key in our home folder. 
+- let's make sure that the keygen is in place. 
+- Right so we have the public key in our home folder. 
+- And now, we'll issue the command to create our cluster. 
+- Now, please know that this actually creates only the configuration files that are required for the cluster. 
+- This will not actually create the cluster itself. 
+- This is the next step. 
+- this ensures that the right artifacts, the configuration files, are in place to create a cluster. 
+- But it will not go ahead and create the cluster. 
+- for now, let's go ahead and issue the Kops create cluster command. 
+- We need to ensure the zones you want to create it in. 
+- And since I'm in the Singapore region, I'm using the ap-southeast-1a region. 
+- And you also note that I have put my DNS name, so my route 53 hosted zone, which is cloudportalhub.com. 
+- So now, prior to creating our cluster, what we need to also do is that we need to ensure that Kops knows where our S3 bucket is. 
+- since we defined our bucket as clusters of cloudportalhub.com, let's ensure that we have this environment variable KOPS_STATE_STORE. 
+- This will be required by the Kops tool. 
+- Now, once this is done, let's go ahead and create the cluster. 
+- Here we specify the zone. 
+- Now, since I'm in the Singapore region, I'm specifying the zone as ap-southeast-1a. 
+- Note that I'm using my route 53 hosted zone - cloudportalhub.com. 
+- Now, please note that this command uniquely is in a sync configuration files for a cluster. 
+- It will not launch the cluster that'll be done in the subsequent command. 
+- let's go ahead and first execute this create cluster command. 
+- So now, you can see that your cluster definition has been defined. 
+- You can also see that it says in the last message to finally configure your cluster use the kops update cluster command. 
+- this will be the command to actually create your cluster. 
+- Now, if you want to get the cluster details, you can issue the command kops get cluster. 
+- This will actually give you the cluster details. 
+- here is the name of a cluster, which is cloudportalhub.com. 
+- This is again pointing to our route 53 hosted zone, and the zone which is ap-southeast-1a. 
+- Now, here you can also see the kops edit cluster. 
+- You can now see that you have this edit ig the name of the cluster and nodes. 
+- this configuration file shows you the configuration of the instances, which will be used to create your nodes. 
+- let's issue this command. 
+- this is the configuration file. 
+- here you can see that you have the image, which is used to spin up your cluster. 
+- this is the main image. You can also see the number of instances, which will be launched for all the nodes. 
+- if you want more number of nodes in your Kubernetes cluster, then change the max and the minSize accordingly. 
+- Please note that Kops automatically creates an auto scaling group with these settings of maxSize and minSize, and then launches the instance as part of this auto scaling group. 
+- This is what gives high availability for your Kubernetes cluster. 
+- Since the instances are launched in an auto scaling group, this is what helps build a high available cluster. 
+- let's exit this file.
+-  If you want you can also change the configuration of the master node, but, for now, what we'll do is let's go ahead and create our cluster. 
+- Right now this is actually going to start creating your cluster in the background. 
+- It's going to start creating those EC2 instances, your nodes, your master, etc., and ensuring that all the necessary components and tools for Kubernetes are automatically installed on these instances. 
+- let's come back once the installation is complete. 
+- Now, once the Kops tool finishes creating your cluster... 
+- you have to wait a couple of minutes in order to ensure that the nodes and master is created. 
+- Now, if you actually go on to the AWS console and you refresh your list of Instances, you will now see that you have three instances defined. 
+- you have two instances for the nodes that are actually defined in the configuration file. 
+- I said there is also a separate configuration file for the master. 
+- there's one node created for the master. So now, you can see that the Kops tool has automatically created the nodes and the master instances in the Singapore region. 
+- If you go back to your putty instance. 
+- it says you can use a kops validate cluster to validate the cluster. 
+- let's issue the command. 
+- So now, it's validated the cluster. 
+- And now, you can see like the normal Kubernetes cluster commands, you get the NODE STATUS. 
+- you have the nodes over here. 
+- What is the role of the node. 
+- And what is the status. 
+- you can see now your master and your nodes are ready. 
+- you've seen how easy it is to use the Kops tool to build your cluster.
+-  It was so simple. 
+- So now, let's move on to our next video, which is Deploying Your Application on a newly created Kubernetes cluster on AWS EC2.
+
+### Deploying Your Application
+- Hi and welcome to the second video in this section, in which we're going to look at Deploying Your Application. So now, in the prior chapter, or the prior video, we have actually seen how we built our Kubernetes cluster on AWS EC2 using the Kops tool. So now, our Kubernetes cluster is now in place, we can deploy our application. you could do this as we have done before for our prior manual installation of a cluster. So now, we have a cluster in place, we can deploy an application. we can log in to the master node. we have the master EC2 node. We can log in to that node. We can create a pod deployment as we normally do. This time, again, we'll use the nginx image to build an nginx pod. We'll then query the pods, and see how simple it is and how it is the same as building a Kubernetes cluster manually. So now, let's go to the AWS console. And let's go ahead and deploy an nginx image or deployment to our cluster. So here, we are back in our session. We are still on our Ubuntu server. Now, we can a ssh into the master node. when we log into the master node, it's actually given a DNS name of api.cloudportalhub.com. Now, if you want to verify this, let's go to the AWS console. So now, if you go to your AWS console. And if you go on to route 53. And if you go on to your hosted zone. we have the cloudportalhub.com hosted zone. You can now see that there are additional entries, which have been created. And this has been created by the Kops tool. when the Kops tool was building the cluster, building the master and the nodes, it also ensured that there's a DNS entry now put in place for each of the master and the two nodes. you can see that the api.cloudportalhub.com is the one that has a public IP associated with it. And we can assess this as the master node. this is to show you that in route 53 these entries have been created by Kops. So now, we can ssh into the master. And now that we are in the master, let's go ahead and deploy a pod onto our cluster using the nginx image. here we are again using our kubectl command. We're running an nginx image by giving a name of my-nginx. We're building two replicas and we're exposing it on port 80. Right? the deployment is created. if you want we can actually issue the command of kubectl get pods. And now, we can see that there are two pods running. both are based on our nginx image. Both have the STATUS of Running. it's as simple as that. We have our cluster in place. But now, instead of actually deploying our pods onto an on-premise infrastructure, our pods are now being deployed on to the nodes on EC2 instances in AWS. And you can deploy whatever pods you want based on images. you could have your own images. Just remember if you have custom images, ensure that they are first published on Docker Hub, and then use it from Docker Hub to create your pod deployment. So now, we go on to our next video, which is Load Balancing in the Cluster.
+Load Balancing in the Cluster
+- Welcome to the third video in this section. Now we're going to look at Load Balancing in the Cluster. we have a cluster set up. We've deployed a pod, an nginx pod, to our cluster. Let us look at how we can actually add load balancing to our cluster. in any deployment of an application on to a Kubernetes cluster, you can expose the pod deployment, so that you can access it from the outside world. let's say you're deploying a web application and the URL needs to be accessed by people outside, you can actually expose the pod deployment. Now when you expose a pod deployment, especially on AWS, and you want to use the load balancer, you have to specify the type. in the command you specify the type as Load Balancer. What this will do is that it will actually then go out and create a load balancer in AWS, which will actually point to the pod deployment. let's now go ahead to the AWS console. Let's see how we can actually create a load balancer in AWS using the Kubernetes commands, which will point to our existing pod deployment for nginx. here we are back in the master node. We've logged in. We've seen our nodes have been deployed. We've seen our pods have been deployed on node, our nginx. now let's issue the command to create a LoadBalancer. So first, we're using the kubectl command to expose our deployment. We want to access it from the outside world. We're again specifying the port 80. We're mentioning the name of our pod deployment. And here, the key thing is we are specifying the type as LoadBalancer. Let's go ahead and exit with command. So now, it's saying the service has been exposed. So now, this has been exposed as a service. Now you can use the kubectl command to get the services, and see those services which are running. So now, you can see that you do have your my-nginx pod working along with a LoadBalancer. Yeah, it has a cluster IP. And it has the LoadBalancer DNS name. Let's now go on to the AWS console and see if this LoadBalancer has indeed been created. So here, we are back in the AWS console. We have our instance running over here. Now let's scroll down. And let's go to our Load Balancers. we can see one load balancer has been created. It has a pretty long DNS name. this is the name that has been created by the kubectl tool. But if you go on to the Instances, you will actually see it's pointing to the nodes. Now currently, the Status is OutOfService, because the Load balancer is still being created. The Load balancer is doing its background health checks on your nodes. it takes time for these health checks to occur. Once these health checks are successful, then these nodes will be InService Status. let's come back once the Status is InService for these nodes. So here, we're back. Now in our Load balancer section, the status of the nodes are InService. all the background health checks have been completed. The Load balancer can now contact the nodes. now if you actually go on to the Description, let's take the DNS name. And let's open it in a new tab. And now you can see you're getting the nginx homepage. what's happening is that this URL is now hitting the nodes. It's hitting your core deployment. And since the index is exposed as a service, you are getting the homepage of nginx. congrats! You now have a working deployment of the pods of nginx running on AWS EC2. And now you have a DNS name pointing to it. And then you can have a SSL certificates pointing to this. You can have route 53 pointing to this DNS name. it's all what you decide to do on how to expose this to your users. now let's move on to our next video, which is AutoScaling the Cluster.
+
+### AutoScaling the Cluster
+- Welcome back. Now in this video, we're going to look at AutoScaling the Cluster. Now we can change the configuration file for either nodes or the master. remember that we did see that there is a configuration file in place for the nodes. In that configuration file you can mention what is the image name that will be used to deploy your nodes, what is the min and max size of the nodes. You can do the same thing for the master as well. if you want to scale up the master to meet demand, you can do that as well. Once you change the configuration file, you have to issue the update command to update the cluster. The Kops tool will then look at the configuration file, and then update the cluster accordingly. you can increase the node size of the cluster. This is good when you see an increase in demand for your pod deployment and usage on your Kubernetes cluster. let's now go ahead to the AWS console, and see how we can go about increasing the node size for our cluster. here we are in the AWS console. in the last chapter we have seen how to create a Load balancer. Now let's go on to the Auto Scaling group section. I just want to show you that the configuration files, which are used by Kops actually internally create auto scaling groups separately for the master and one separate for the nodes. there are two auto scaling groups created. You can see that the Min and Max size of these auto scaling groups is as per what we defined in that configuration file. if you increase these parameters accordingly and update your cluster, you can actually work with these auto scaling groups. And this is how in AWS you actually scale up based on demand - by using auto scaling groups. let's now go ahead to Kops. Let's change the configuration file. And let's update our cluster by increasing the number of nodes in our Kubernetes cluster. here we are back in the console. Now currently, we are actually logged on to the master. let's exit from here. Let's go back to our Ubuntu instance. now here we are back in our ubuntu instance. We are now going to edit the nodes file. remember this is the configuration file that is used for the nodes in our auto scaling group. what we're going to do that we are actually going to change the min and maxSize in this group. let's mention it as 3. Let's go ahead and save the file. we have saved our configuration file. Now we are going to issue the kops update cluster command to update the cluster based on the configuration file. what the Kops tool will do is that it will go into our configuration file, it will check the changes with the baseline, and if there is any updates to be made it will do it. let's go ahead and issue the command. in the previous screen there was just a typo in the command. What I had done is I entered the command appropriately. we're doing a kops update cluster cloudportalhub.com and ensuring it to ensure that the cluster is updated accordingly. now these changes are being made to the nodes. Now, let's come back once the third node has been created. So now, if you go back to the AWS console, and you refresh your auto scaling group, you now see that for the nodes, you now have the changed size of the Min and Max. And if you go to the auto scaling group, if you go to the Instances you will now see that you have three healthy instances. And if you go onto the EC2 dashboard, you should be able to see those instances as well. now you have this node. this is the new node, which started running based on our update to the cluster. Currently, the status check is initializing. But now what happens is that you have one more node, in which you can actually deploy your pods. this is how you can actually auto scale your Kubernetes cluster. You can just change the configuration file, and Kops will do everything for you. now let's move on to our next video, which is Monitoring Your Infrastructure.
+Monitoring Your Infrastructure
+- Hi and welcome back. So now, in this video, we're going to go about seeing how to monitor your infrastructure. Now, there are various other tools in the market, which can be used to monitor infrastructure. there are third-party vendors who actually have a specialized tool to mount a Kubernetes cluster. But if you want something that's out of the box that's available with Kubernetes, what you can do is that you can actually use the dashboard itself. what you do is that you just need to install the dashboard tools. it's just as simple as using the yaml file, which is available. It will install the dashboard tools. You can then use the dashboard to see how the nodes are working. You can see how well these nodes are actually utilizing these resources. You can also see your deployments. let's now go about seeing how we can access the dashboard. I did mention that the first thing we need to do is that we need to ensure that we get the yaml file and install the dashboard itself. you can do this using the kubectl command. And this is the link from the githubusercontent.com, which can be used to install the dashboard for Kubernetes. Now once this is done, the next thing you need to do is that you need to get the password. this password is what is used to actually get into the Kubernetes dashboard. for getting the password let's exit from our master. We're back to our Ubuntu instance. We need to ensure the Kops tool, we need to issue this command in order to get the secret. So now, we have the password, which is going to be used to log in to our API dashboard. So now, we can actually use the api.cloudportalhub.com. that's the API server on our hosted zone /ui to actually access the Kubernetes Dashboard. Now, you will be prompted to enter the admin username and the password. do so. And then choose the Kubeconfig. And you can click on Skip. So now, you can see the Kubernetes dashboard. You can see the Overview. you can see the number of Deployments you have, the number of Pods, the Replica status, etc. So now, if you go on to the nodes. you can see the different nodes. This includes both your master and the nodes as well. You can see the uptime for each of these nodes. You can see how many CPU requests, the CPU limits, the Memory requests etc. this is a good place for seeing whether you really need to scale up your infrastructure. if you see that there is a lot of strain, a lot of stress on the existing nodes, what you can do is you can use the Kops tool to actually update your cluster accordingly. Now, when you go back to your dashboard, you can also see your Deployments. You can see how long the deployment has been up. You can see the number of Pods that have been assigned to your deployment. You can see the individual Pods as well. You can see them running. You can actually drill down to the pod itself to see what is the Node IP. And you can see the containers that are part of the node. here you can see the entire status of the pod itself. the dashboard is a good entry point into actually monitoring how your cluster is behaving. I said you can see your nodes, you can see the pods, you can see the deployments. Now obviously, if you want more data than this, as I said there are open source tools out there. And there are also other third-party vendors, which provide customized tools to actually monitor your Kubernetes deployment. It just all depends on what you want from your monitoring requirements. let's move on to our next video, which is Logging Your Infrastructure.
+Logging Your Infrastructure
+- Hi and welcome back. So now, in the last video in this section, we're going to look at how to implement Logging for Your Infrastructure. So now, you can use the kubectl logs command to actually get the logs from your particular nodes and the pods that have been deployed. Now you can actually redirect these logs to AWS Elasticsearch Service. Now there are number of ways you can actually search your logs. Using the AWS Elasticsearch Service is one of them, but you can use any service that you want. you can rewrite these logs to any service and and then search them accordingly. I said you can stream the logs to a logging service. now let's go on to the server. Let's see how we can just see the logs. And I said from there you can access stream logs to any service that you want. Now, here we are on our server. Now, the first thing we need to do is that we need to get the pods. Once we get the pods, we can actually use those pod names to actually get the logs. what we can do is that we can just replace this with logs, get the pod name. And here you can see the log. So here, these are the logs of what activity is happening on the pods, which have been deployed to your Kubernetes cluster. And I said then you can stream these logs to AW services. Or if you have some EC2 instance, which has its own search service, you can actually in the logs to that service. And then you can use the logs accordingly for any search criteria that you want. So now, let's move on to our next section, which is Using the Elastic Container Service.
+
+### The Architecture of the Elastic Container Service
+- Hi and welcome to the third section in this course. So now, in this section, we are going to go through one of the services which is available on AWS for managing containers and that is the Elastic Container Service. in this video, we are first going to go through the architecture of the Elastic Container Service, because this is important if you are planning to use this service in AWS. first what exactly is the Elastic Container Service? Well, AWS released this service for management of containers on the cloud. in the prior chapters, we have actually seen how does Docker work, how Kubernetes as an orchestration platform for containers works, and how we can actually deploy Kubernetes to the cloud on EC2 instances. But if you want a completely managed service, so you don't want the, you know, facility or the ability to actually manage the underlying software to manage those containers, then you can use the Elastic Container Service. this helps you manage your Docker containers in a cluster. So in the end, Docker is still the most popular tool for managing containers. And hence, this container service can also be used to work with Docker containers. It helps you manage all your container-based applications. you can deploy a host of containers that actually comprise of your applications. you could have an application that has a web tier and a database tier as containers. You can collectively deploy this as an application on the Elastic Container Service. one of the key advantages of using the service is that you don't need to install and maintain the underlying orchestration software that is used for managing the containers. this is one of the biggest advantages. And it's a key overhead production in terms of administration for containers. So now, let's go through the architecture in a little bit more detail. Now, the first key thing we have is something known as a task and the Task Definition. the Task Definition defines several aspects. One key aspect, please note, is the Docker Image. in the Task Definition, you say what is the image that is going to be tied to this task. the definition will then see what is the image specified. It will then actually pull out the image from a container S3, and then deploy the task with that image. one of the key aspects, here, you mention is what is the image that's going to be used. Next, is how much CPU and memory that you want to constrained for each container. And what is the type of networking that has to be used for all the underlying tasks. Now, there are different networking modes. In our demos we are going to be using the default Docker networking mode. So now, via diagrams let's try to understand the architecture of the Elastic Container Service in a little bit more detail. I said the first thing you do is a Task Definition. here you mention the image. you could have one task definition that says please pull out or use the image for nginx. You could have, similarly, another task definition, which says please use apache as the underlying image. So now, we have two tasks definitions. Then what you can do for the first task definition is you can actually create a Task. And then you can assign it to a Cluster. the Cluster is responsible for managing the containers in this Container Service Architecture. Similarly, for the second Task Definition, you can assign another Task, and assign it to another Cluster. Now, please note that you can use more than one task definition for the same cluster. Just for the sake of understanding, I have actually segregated the task definition, the task, and the cluster. Now, again when we come back to our Task Definition, Task, and Cluster, one very important thing to note is about the task. in the Task Definition, I said over here, let's say we're specifying the Image as nginx. Now, when you are deployed this as a Task, the Task will actually go out to a Container Registry system. the most popular one is Docker Hub. You can also use the Elastic Container Registry, which is available from AWS. what this task will do that it will actually pull out the image from Docker Hub or from Amazon ECR, and then deploy it to your cluster. please be very sure when you're actually specifying the image name in the task definition. This is an important aspect. Now, going more into the Container Service Architecture. Now, when we come to each Task, each Task will be assigned an Elastic Network Interface, which will be used for the underlying communication. This will then be assigned to a particular Availability Zone, which can be a mapped to a particular VPC. So now, when we actually go and create a cluster in AWS, you will actually see that the Container Service will automatically create these subnets for you. there's a [inaudible] which is specified, and it will create the VPC for you. all of these underlying components, which are necessary for the deployment of the Container Service, will be deployed for you automatically by the Container Service itself. You can then have a Service, which in encapsulates this entire task. And the service can also be used for exposing, as you've seen in earlier chapters, your containers to the outside world. you can do this via the service. Now, there a lot of other things we can actually do with tasks and services. And we have separate chapters which delve into the details of how you can manage tasks and how you can actually manage your services. So now, let's go on to the next video, which is the Creation of ECS Clusters.
+
+### Creating ECS Clusters
+- Hi and welcome back. Now, in this video, we are going to go through the process of creating Elastic Container Service Clusters. one key thing to note is that the ECS clusters themselves are a logical grouping of tasks and services. in the prior video, we did see a little bit about tasks and task definition. One key thing to note is that clusters are region specific. when you do create your cluster ensure it is created in the region of your choice. When you are creating a cluster you can use two options. one is a Get Started Wizard. if you're completely new to creating clusters in the ECS service, this is a good way to start. In this wizard what happens that it allows you to create the task, the service, and the cluster all at one time. after the wizard you'll get a cluster running, you'll get your tasks running, and you'll get a service running. Or you can create the cluster from scratch. here is where you have to specify additional options. in the wizard I said a lot of things get created in the background for you, such as the VPC, such as a subnet, etc. In the created cluster you need to mention what is the type of cluster you want, and what is the VPC that needs to be created along with the subnets. when you do the create cluster method, you have a choice of what type of cluster you want to create. You want to create a cluster with Windows-based instances or Linux based. You can use either on-demand or spot instances for your cluster. You can choose the instance types or how heavy do you want your workload to be, the number of instances that you actually want running for your cluster, what is the storage requirement for your cluster, also the key pair. do remember that if you want to log in to the container instance which is a part of your cluster, create the key pair in advance, so that you can actually use the key pair when creating the instances if you want to log in at a later point in time. You also choose the networking, so the VPC and subnets. You need to create a container role, that role can be created automatically with the wizard or with the create cluster method. And this is used for the cluster to make the necessary ECS API calls. Now, in the Get Started Wizard, you have to start off with the task definition. what you want to be part of the task. Then the service definition. And then finally, the cluster definition. these are just the minimum settings that are required when you actually use the Get Started Wizard. The remaining cluster artifacts are automatically created for you. everything from the VPC to the subnets, everything is going to be created for you when you use the Get Started Wizard. So now, let's go on to the AWS console. Let's see how to go about creating our first ECS cluster. here I am in the AWS console. I'm going to be creating my ECS cluster in the Singapore region. I didn't mention that you need to be sure of the region that you want to create your cluster in. choose a region beforehand. Now, in another tab I have also opened the VPC. currently in the Singapore region I only have the default VPC, which is present with that particular region. I don't have any other custom VPC created, as of yet. And in the EC2 management console I currently don't have any instances running in this particular region. So now, let me open another AWS tab. And now, let's go on to the Elastic Container Service, which is present in the Compute section. If you don't have any Elastic Container Service created in this region, you will get the get started homepage. But if you want, you can actually go on to Clusters. So here, you can see... I didn't mention there are two options to create a cluster. one is the Create Cluster. And the other is the Get Started wizard. You also have your Task Definitions. currently we don't have any tasks defined. let's now go ahead to Clusters. And let's click on Get Started. this is the method you want to adopt if you are completely new to clusters. if you are new, if you want to see how it actually works, I recommend using this method to start creating your cluster. first is the definition of your task. remember that the task definition is used to join your tasks on the Elastic Container instances. let's give a name for our task. I'm going to give it as nginx-task. I'm going to make nginx run as a task on our cluster. You can give a Container name. I'll name it as nginx-app. And then is the Image. this is the image, which it can be pulled down from Docker Hub. for that I'll specify the nginx image. this will be pulled form Docker Hub. If you have a custom image make sure it's in a public repository, and also specify the complete registry URL, name space, image, and tag. Next, you mention what is the Hard limit. how much MiB do you want to allocate to this resource as a maximum limit, right? it should not go beyond this limit - the container which is spun up from this image. And then you have the custom Port mappings. since I want this run on port 80 and expose the port to the host, I'm going to leave it as it is. this is the task definition. here we're defining what the task should contain. Let's go on to the next step. Next we have what is the service. So now, under the service, we're going to have a number of tasks. let's give a name for our service. we'll call it as nginx-service. And the number of tasks that you actually want to run. you can run a multiple of tasks. if you want to load balance the load inside the service itself you can decide on an increased number of tasks. I'm just going to leave it as 1 for the moment. If you want, you can use an Application Load Balancer. I am currently not going to use the load balancer as of yet. We have a separate chapter itself on how you can actually create the load balancer later on. Because initially, when you actually starting out with ECS clusters you'll want to first focus on creating a cluster itself, make sure it works, and then create a load balancer later on. let's leave the settings as they are and go on to the next step. Next is the configuration of the cluster itself. you can put a Cluster name. we can put demo cluster. Next is the underlying EC2 instance type. here you can actually choose what is the type of instance you want - the underlying hardware. And again, this depends upon the requirement. What you expect the load to come on your ECS cluster. Next, if you want to distribute the load, you can have, you know, an increased number of instances. At the moment, I'm just going to keep 1. So now over here, you can see that you have to have a Key pair available for you in a particular region. this will be used to actually log in to your EC2 instance. Now, in case if you haven't already created a key pair, you can actually go to the EC2 management console. Let's go on to Key Pairs. And let's create a new key pair. let's name it as ecskeypair. Let's create it. Right, so the private key file will be downloaded for you. This will be used to log in to your instance at a later point in time. Then you can just go to the ECS website. You can do a refresh. And you should be able to see your new ecskeypair, right? that's done. Now at the moment, I'm going to allow traffic from Anywhere. This is the security group, which will be attached to your cluster instances. And then we are going to specify that Create new role. I said the role is required for the instance to make the necessary ECS API calls. We're going to leave the wizard to create the role for us. We're then going to do a Review & launch. Right, so you can do a review at the end of the page. And if you're satisfied with the review, you can go ahead and Launch instance & run service. So now, you can see there's a whole lot of tasks that have to be created or done by the underlying service. But you can see all of this is going to be done for you. if you go down you can see that it's going to create a CloudFormation stack. And in the stack it's actually going to create the Internet gateway, the VPC, the Route table, the Subnets, etc. all of this underlying infrastructure, which you have to create manually, it's going to be done by the service itself. You don't have to do anything yourself. this is the advantages of using the Elastic Container Service, where the entire infrastructure and everything is spun up for you. So now, let's come back once all of these tasks are successfully created, because this is going to take some time. Maybe it's just 5-10 minutes. So now, we're back. it just took about five minutes for the entire process to complete. But you can see that all of the green checks are in place. That means everything has been created for you. Now actually, if you go on to the VPC. Let me just do a refresh. So now, you can see there's an additional VPC that's created for you. I said this has been created by the wizard. And it has automatically also created the subnets. Now, please note that you can also create your own custom VPC, your own subnets. And then specify that the ECS cluster should run in this VPC or subnet. this is at an advanced level. I said at the basic level if you want to start using the ECS Container Service, this is the best way. And the best thing about the service is that it does everything for you. if you want reduce the maintenance overhead, let the Elastic Container Service do, you know, the heavy lifting for you. And if you go on to the EC2 management console. Let me go on to the EC2 dashboard. So now, we can see there is one running instance. this is our EC2 Container Service instance, which will be hosting our task. If we go back to the ECS dashboard. Let me go on to View service, right? let's go on to Clusters. So now, you can see that you have your demo cluster running. Right in this video, we have seen how to create our first cluster. Now, let's go onto the next video, which is Managing Container Instances.
+
+### Managing Container Instances
+- Hi and welcome back. Now, in this third video we actually just going to go through Managing Container Instances. Now, before we actually go through tasks and services, I thought it'd be good to understand the container instances which are actually part of the cluster itself. in our cluster you need to have these EC2 instances, which are used to actually manage the tasks which run in your cluster. So again, we have chosen a particular instance type. this depends upon the load that you expect on the cluster. the Cluster is responsible for distributing the tasks across these Instances. Now, when it comes to container instances you have the specific AMI which AWS has, because this AMI contains the container agent. This agent is actually responsible for communicating with the cluster node. you have to ensure that you, you know, use the AMI which is specific to that particular region. I said that this container agent actually establishes communication with the cluster itself. Now, the instance automatically we have seen got created during the cluster creation. But at times, maybe you want to have a customized container instance, which is attached to a particular cluster. Because sometimes organizations want certain scripts to run during boot time. you could have a customized container instance. It would have some script at boot time that it would run. And then it would attach itself to the cluster. this is a use case scenario where you would want to have your own container instance, which could be attached to the cluster itself. So now, what are the steps when you want to have your own container instance? first is create the instance with the particular AMI which is specified by AWS. this has that container agent already installed on it. Ensure that the role is assigned to the instance. this role is required for the instance to not only communicate with the cluster, it's also required to make the necessary ECS API calls. Now by default, the instance will be created in the cluster called default. Now, if you've already created your own cluster, it has a particular name. we've seen this in our earlier chapter, where when we actually created a cluster we specified a name for the cluster. if you want that instance to be added to an already running cluster, you need to add a script to the UserData section on the EC2 instance, which specifies the cluster it should attach itself to. let's go to the AWS console. Let's see how to create a container instance, and attach it to our already running cluster. here we are in the AWS console. let's go to the EC2 management console. And let's launch an instance. here we need to actually go on to the Community AMIs. Let's search for a particular AMI. So now, this AMI has actually been created by Amazon. It is ECS optimized so that it's built for ECS. It also has the container agent. if you actually go to the documentation for AWS and for ECS, they actually have a table which has the respective AMI IDs that you should actually choose when you are in a particular region. Since I am in the ap-southeast-1 region, I am choosing that AMI accordingly. let me go ahead and choose this AMI. Again, you can choose what is the instance type you want. If you want, you can choose t2.medium. Let's go on to next to configure the instance details. So now, we have to ensure that this is launched in our new VPC. please make a note of that. Don't launch it in your default VPC. This is because our cluster has actually been created in a new VPC. But if you want, you can attach the role right now, or later on. it's important to attach the role. Now, there is a role that was created along with our wizard when we created the cluster. This was the ecsInstanceRole. Now, if you are not sure, you can actually go on to the EC2 dashboard. let's go on to the EC2 dashboard. And actually, if you go on to your running EC2 instance in your cluster, you can actually see the role that has been assigned to it. let's go to our running instance. if you go to our ECS Container Service instance, and if you scroll down. you can see the IAM role is ecsInstanceRole. let's ensure that that role has been chosen. Now, we have to go on to the Advanced Details. Go on to User data. So now, what's important is the script that you need to attach in User data to ensure that this instance will be attached to the demo cluster. you have to echo the cluster name in the ECS config file. And then this will be attached to our running cluster. Let's go on next to add storage. leave the storage as it is. We can add a tag. we can add a new name tag saying this is our NewEC2ECS. In the Security Group, I'm going to choose the same security group which was launched as part of our EC2 Container Service. I'll go to Review and Launch. I'll click on Continue. I'll go to Launch. I'll acknowledge that I have the ECS key pair. And let me launch the instance. So now, let's come back once the instance has been successfully launched. So now, we're back. Now, once your EC2 instance, your new one, is up and running, if you go on to your cluster and you do a refresh, you'll actually now see that there are two container instances. If you go on to the cluster. And if you go on to ECS Instances, you will actually see those two EC2 instances in your particular cluster. So now, we have seen in this chapter how you can actually register your own container instance, which has the agent to your demo cluster. So let's go to our next video, which is Working with Tasks.
+
+
+### Working with Tasks
+- Hi and welcome back. So now, in this video we're going to go ahead and start walking with our tasks. in our earlier video, we had seen that we have task definitions. this has aspects, such as the image type which is used for the particular task. you can have multiple task definitions. These are then created as tasks, and then assigned to your cluster. Now, in the task definition. the Docker image is used in the task. The Docker image will be used to spin up the respective container on the container instance, which is attached to the cluster. We are currently using the Docker networking mode for the containers which are spun up in the container instance. If you want, you can attach any data volumes to the task, just as you'd normally do with Docker containers. You can also have a command which runs when the container starts. And then we've seen that we have that maximum CPU and memory, which can be assigned for the particular task. Now, one key thing to note is that you can actually create new revisions for each task. let's say you have a new image, or new version of an image, which you want to use for a particular task or a new task. what you can do is that you can create a new revision for the task definition. And then run that new task on an instance in the cluster. this is how you can actually effectively maintain different revisions of your application by maintaining different revisions for your task definitions, which in turn have different tasks which run on your cluster. And then you create a service for the tasks. I said the service can have a collection of tasks. you could have one task which is for your web tier, one task which is for your database tier. And everything is collectively bundled as a service. Now, let's go to AWS console and see how we can actually work with tasks. Right, so here we are in the AWS console. We have our ECS cluster open. Now, if you go on to Task Definitions. this is the task we created earlier. So if you want, I said you can create a new revision for the task. Let's go first into the task details. this is a task which we have created. It has a default Network Mode. this is using the default underlying Docker networking mode. Then based on what we actually created when we spun up the task or the ECS cluster. we have the amount of memory that's assigned for the container. This is the maximum allocation of container memory. And then we have the container itself. what the Container Name is. What the Port Mappings are, etc. these are the different attributes that you have for your particular task. let's go back to our cluster. So now, currently we see that we have one Desired task and one Running task. So now, if you go on to the task itself. here you can actually see what are the tasks which are Running or which have Stopped. So currently, we don't have any Stopped tasks. We just have one which is Running. Know that you can also Stop a task. you can click a task and you can Stop it. But for now, let's go ahead and understand what's there in our task. it is part of a service. It is in the RUNNING state. The Networking mode is bridge, so the underlying networking. And if you go on to the Container itself. currently it has one Network binding. Currently, we've not defined Environment Variables, Docker labels, etc. these are the simple things which you can attach to your task - just like we do for Docker containers. What's interesting that I just want to point out now is let's take the External Link. And let's open it in a new tab. So now, what you can see is that we now have the nginx homepage. what's happening is that the Container Service has taken the task definition, which was an nginx container. It's downloaded the image from Docker Hub. It's installed that container on to one of our container instances. And now, it's running as a task. you see how easy it was to create a cluster which we did in our initial chapters. That automatically created a task based on our task definition. And we have got our nginx homepage. Now if you want, you can create a new task definition. let's say you want to maybe run the Apache task on this cluster. You can do so. you can go on to Task Definitions. Create a new task definition. say that you want to run an Apache instance, right? You can keep the role as optional and the default Networking Mode. Again, you can specify the amount of memory. I'm going to specify the amount of CPU units. And then we need to attach the container. what is the image in the repository we're going to be using? if you want to run Apache, I have just got a tab open on the Docker repository. you need to pull this image down. let's go ahead and copy this. Let's go to ECS. Let's put just the Image name, that's it. And let's put it as ApacheContainer. Let's put the Hard limit. Let's do the Port mappings. If you want, you can run this on different ports or on the same port. If you want, you can actually do a HEALTHCHECK as well. We're going to leave all of the settings as they are. Click on Add. Right, so now we've got a container added. Let's go ahead and create the definition. the Task Definition has been created successfully. Right, so if you go on to our Clusters. If you go to our demo cluster. we've got a task running. Now, what we are going to do is that we are first going to go to our service. We are going to go to our service and we're going to update it. And we're going to make the number of tasks as 0. this is the service which is running our nginx task. Now, what happens is that if you leave the task with the number of tasks as 1, when we stop the task in the service automatically the service is going to start the task again. let's go back to view Service. Let's go back to our task. currently we have now no tasks running. Let's go back to our cluster. Let's go to our demo cluster. Let's go to our task. currently now we have no tasks in the Running state. let's go ahead and click on Run new task. Let's choose Apache:1. Let's run it in our demo cluster. We'll leave the Placement Templates as it is. what this does that it will actually evenly balance out the tasks across AZs. And let's go ahead and run the task. the task has been successfully run on your demo cluster. It's currently in the desired state as Running. So after some time, we do a refresh. You can see the status now as RUNNING. let's go to our task. Let's go to our container. Let's take the external IP again. And let's open it in a new tab. And now, you can see that it's working. what we've successfully done is that we have actually now spun up an Apache task, an Apache container instance in our cluster using another task definition. why did we actually stop the previous task. Because both them would run on the same port as 80. for the purpose of the demo to ensure there was no conflict between nginx and Apache, I made sure that first I updated the service definition for the nginx task to 0, so that no tasks are running. And then I made sure now that this service uses the new task which runs on the cluster. here you've seen how you can actually work with tasks in the Elastic Container Service. So now, let's move on to our next video, which is Working with Services in the Elastic Container Service.
+
+### Working with Services
+- Hi and welcome back. Now, in this video we're going to go through Working with Services in the Elastic Container Service. the service is used to ensure that the tasks run. I said the service is an encapsulation of your task. And a task is based on the task definition. it always ensures the desired number of instances of tasks runs in the service itself. In the last video, we had seen that in order to run a different task based on the Apache container, we had to ensure that the service was updaded to ensure that 0 tasks of the prior task definition was in place. This was done because I said by default if the task instance is killed for whatever reason. if we go and manually stop the task or for whatever reason the task instance is killed, the service will create a new task. And this is because it is trying to keep your service up and running in Elastic Container. Now, you can also attach a load balancer to a particular service. And we're going to see that in a subsequent chapter. And we will look at load balancing. Now, when you create a service itself, you first need to specify the task definition. You to specify the cluster it needs to run in. We will specify the number of tasks to run in that particular service. The default strategy for the service is to spread the tasks evenly across multiple availability zones. And this is the best strategy. Here we have the Minimum healthy percent. this is the number of tasks that should run at any point in time. This is based on a particular percentage of the total number of tasks. And then you also have the Maximum percent, similar like the minimum. As I said, you can also attach a load balancer to the service. So now, let's go ahead to the AWS console and see how we can work with services. here we are in the AWS console. if you go on to demo. here you can see our nginx service, or our web app service. This is what we created initially. what you can do is you can actually create a new service from scratch. You can say this is the task definition to run. You can specify this as a cluster. We can specify the Service name, the Number of tasks, the healthy percent, the Maximum percent, and the Placements Templates. This is how you would actually go ahead and actually configure the service itself. But before that, I just want to kind of go back. Let's go to our current service. Right? let's explore the service itself. currently there are no load balancers attached this particular service. If you go on to Tasks, you can see currently we have no tasks Running. If you look at Auto Scaling. you can see that there is no auto scaling resources currently configured for the service. And if you look at deployments, currently there is No strategies or Constraint in place. this is just to show you what is currently happening in our current service. So now, let's go ahead to our task. And let's kind of Stop this task. I just want to show you that you can actually Stop a task. There is no task Running. Let's go back to our service. Let's click on the service. Click on Update. Right? currently we don't have any number of tasks running. Now what you can do is, you can actually change the task definition to Apache:1, if you want to. Here, you can even change the Number of tasks. let's put this as 1. Let's go on to Next. Now, one key thing to know is that when you are actually configuring a load balancer this can only be done on the service creation. understand the step. in the load balancing chapter we are actually going to create a new service, but this is only after we create the load balancer. when you go on to the next step what you can do is that you can also configure auto scaling. in auto scaling you can set what is the Minimum number of tasks, the Desired number of tasks, and the Maximum number of tasks. I have a separate chapter on auto scaling. at the moment I am not going to configure auto scaling, right? I'm going to go on to the Next step. And I'm going to update the service. So now, the service has been updated. let's wait till the service starts a particular task. So now, if you come back. It just takes hardly a minute. You will now see your new task running. This has now the task definition of Apache:1. And this is basically part of your service. So you can see now, the nginx-service is a different name from what the task it is running. But this I want to show you that you can actually update a service definition to run a new task or an updated task definition. this is how you can actually update your current service in the Elastic Container Service. So now, let's move on to our next video, which is Load Balancing the EC2 Cluster.
+
+### Load Balancing in the ECS
+- Hi and welcome back. Now, in this video we're going to look at how to load balance an EC2 cluster. you can add load balancing to the service which is running in your cluster. remember the service runs your task. 
+- Now, you can add a Classic, a Network or an Application Load Balancer. an Application Load Balancer is used to route traffic on the Layer 7 OSI model. 
+- if you want to route traffic on HTTP or HTTPS, then you use the Application Load Balancer. It also has a lot of other features, such as diverting traffic based on routes. 
+- The Network and the Classic Load Balancers are used to route traffic on TCP. that's Layer 4. Now, normally for containers, for dynamic host port mapping you would normally use an Application Load Balancer. 
+- normally when walking with load balancer and the Elastic Container Service, you would normally create an Application Load Balancer, and then attach it to the service. 
+- one of the key aspects when you're working with load balancers and the services in the Elastic Container Service, is first you need to create the Application Load Balancer. 
+- You need to ensure that no instances are registered with the load balancer. 
+- We need to ensure that the load balancer is created in the right VPC as the cluster. 
+- You retain the Security Group Rules for the load balancer to ensure that it allows the right traffic. And then you create the new service with the Load Balancer option. 
+- let's go to the AWS console. 
+- And let's see how to work with the load balancer. 
+- here we are in the AWS console. I did mention that the first thing we have to do is that we have to create a load balancer. this will be an Application Load Balancer. 
+- in your EC2 dashboard, go on to the Load Balancer section. 
+- Let's go ahead and Create a load balancer. we have three types of load balancer: the Application, the Network, and the Classic. 
+- Obviously, if you're working with containers and microservices you will choose the Application Load Balancer. 
+- let's choose that. Let's give a Name for the load balancer. 
+- Let's keep it as an internet-facing load balancer. 
+- Let's keep the IP address as it is. We're going to keep the listener as the same. it's going to listen on the backend port on port 80. 
+- our containers anyway are running nginx or Apache on port 80, so that will be our backend instances. 
+- it will listen on those port. 
+- We will ensure that we choose the right VPC. we have to our VPC which has the cluster. Let's ensure we choose both the Availability Zones.
+-  Let's click on Next to configure security details. Let's get a new security group. 
+- Let's name it as ELB. 
+- Right, so we have a new security group. 
+- Let's ensure that the security group allows traffic from anywhere. 
+- we are going to actually hit our ELB, which actually hits our container instances - so on port 80. In the routing, let's create a new Target group. 
+- let's give it a Name of demotarget. 
+- Let's leave the Protocol and the Target type as instance. 
+- this will actually ping our backend containers on port 80, make sure it is healthy. And that's what our health checks will be based on. 
+- Next, we can go ahead and Register Targets. 
+- in this way going to leave it as it is. 
+- We're not going to register any targets.
+-  this will be automatically done when we register the load balancer with the service in Elastic Container Service.
+-  Let's go on to Next to review. You can review all your settings. 
+- And go ahead and create the load balancer. Right? let's close this. our load balancer is currently being provisioned. Let's wait a couple of minutes while the load balancer is completing in the provision state. here we are back.
+-  Now our load balancer is in the active State. So now, we can actually go ahead to our container, our service. what we can do is that we can actually Delete our existing container. 
+- Let's enter the phrase delete me. Let's Delete the service. now we don't have a service. Let's create a new service from scratch. 
+- We can again use nginx. 
+- We can use the same Cluster. 
+- We can create a cluster name. 
+- We can create a Service name. 
+- We'll put the number of tasks as 1. 
+- Let's specify the same defaults for the Maximum percent and the Minimum healthly percent. 
+- Let's leave the Balanced Spread as AZ. 
+- Let's go onto Next step. 
+- Now, here is actually where you can actually mention the Load balancer. 
+- let's choose the Application Load Balancer. 
+- And if you go down, you should be able to get the load balancer, which is defined in that particular region.
+-  Let's allow a new service role to be created. 
+- Let's leave the Container name : port. 
+- Let's add it to the load balancer. 
+- For the port, let's choose the default one, so as port 80. 
+- Let's leave the Path pattern as it is. And let's go on to the Next step. We have to enter an Evaluation order. 
+- Now, after specifying the Listener port, in the Target group name let's choose our demotarget. 
+- when we scroll down we've now done our Listener port configuration and our Target group name. 
+- Now, let's not add auto scaling. In this chapter of only focusing on load balancing. 
+- You can review all the configuration. And once everything is done, let's go ahead and create the service. 
+- So now, this is going to create the service. This is going to ensure the service will attach itself to the application load balancer which we just created. 
+- let's come back once all of this is done. 
+- Now, once the service has been created successfully, you can go to View service, right? So now, currently the status is PENDING for the task itself. If you want, you can do a refresh. Alright, so now it's in the running status. So now, let's do one thing, let's go to our load balancer. Let's take the complete DNS name. Let's open it in a new tab. And now, you can see you're getting the homepage for the nginx web server. So now, our load balancer is pointing to the service. The service is running a task. And the task is based on the task definition for running nginx. this is how you have the ability to add a load balancer to your service in the Elastic Container. So now, that we are done with working with the load balancer, let's move on to our next video, which is Auto Scaling the EC2 Cluster itself.
+
+### Auto-scaling the cluster 
+- Auto Scaling the eEC2 Cluster. 
+- you can add auto scaling to a particular service, but you have to note that this can only be done during the service creation time. 
+- here you can specify the minimum desired and maximum number of task instances that should run in the particular service.
+-  Now, if you are familiar with auto scaling, auto scaling groups normally have this concept of specifying the number of minimum instances that should run in a particular group, what should be the desired capacity, and what should be the maximum number of instances that should run in a particular auto scale group. 
+- And the same concept is applied to the instances of a particular task. here you can mention what is the minimum amount, what is the desired amount, and what is the maximum number of task instances that should run. 
+- You can also specify how you want to scale them - similar like an auto scaling group. Do you want to scale them based on a schedule? Or do you want to scale them based on a particular metric value? 
+- we're going to see that in our demo, as well, how you can actually specify the scale. Now, apart from the task instances themselves, you can also scale the number of EC2 container instances themselves. 
+- in an earlier chapter we had seen how we can add an instance to a particular cluster. But we can also do this using an auto scaling feature which is available in the Container Service itself. let us go to the AWS console and see how we can work with these two aspects. here we are in the AWS console.
+-  we have our cluster. Let's go back to our cluster. we have our cluster running. if you go on to the ECS instances themselves, what you can do this you can click on Scale. And here, you can specify what is the desired number of instances that should run. here is where you can actually mention how many instances you want to part. 
+- here you can mention the number of instance you want to run in your auto scaling group. If I just go back to the EC2 management console, let me just go on to Auto Scaling Groups. when you look at your auto scaling groups, you can see that there is only a Launch Configuration in place and an auto scaling group. 
+- And this is because this was created when we actually created a cluster. the cluster when it was created it created all of these artifacts in the background for you. And I said that's one of the advantages of having the Elastic Container Service. 
+- I want to show you that, you know, you need to be careful of what artifacts are created. Because if we do delete the cluster, if you ever do, all of these would be deleted for you as part of the cloud formation stack which is created in the background. let's go on to our Elastic Container Service. 
+- Now, in order to ensure that you add auto scaling to tasks themselves... I did mention that you will have to create a new service from scratch, because you can't attach an auto scaling group to an existing service. 
+- what you can do is you could actually go to a particular service. Now, there's already currently one service Running. What we can do is we can actually stop the task. We can just do Stop All. let's stop the task. 
+- Let's go to our service. what we can do is just Delete the service. Let's enter the phrase. Right? the service is deleted. Now, let's go ahead and create a new service. we can use our nginx or Apache task. 
+- Let's put it in our demo cluster. let's give it a name. Let's put the Number of tasks as 1. Let's put the Minimum healthy percent and the Maximum. Let's leave the Placement Template as AZ Balanced Spread. this will spread the tasks across the availability zones. Let's go on to Next step. let's leave the load balancing as it is. Let's go onto the Next step. And now, in the Auto Scaling section, which is optional, let's configure auto scaling. Now, let's put the Minimum number of tasks as 1, the Desired as 1, and the Maximum as 1. Now, why I'm mentioning the number of tasks as only 1 is because if you run more than one task in this particular service in the cluster, there will be a conflict in ports. remember that we are running a web server. It's running on port 80. there would be a conflict. ensure that you are in the right image, the right container that has a load balancing aspect in terms of auto scaling. And then you can put the desired number of tasks. what you can do is that you can then choose the desired image, which can have that auto scaling capacity. And then change the number of tasks accordingly. Now, I will allow a new IAM role to be created for this auto scaling group. here you can actually mention what is the way the auto scaling group will scale up. do you want to do a Step scaling? Or do you want to do a Target tracking? if you want to do Target tracking, let's give a name. And it's based on the average CPU utilization of the service itself. let's specify a value of 10. this is your target CPU. normally in a production or staging environment you would probably specify it as 60 or 70. But for our case you can mention as 10, since this is a demo. Now, you have the Scale-out cooldown and the Scale-in cooldown. if you're again familiar with auto scaling, you have to have this cooldown period for both your scale-in and your scale-out. This is so that when you do a scale-out, so when you add another task to your auto scaling group, you have to give some time for your application to stabilize in that ECS cluster before you can actually spin up another task. always ensure that you specify a decent amount of seconds in order to ensure that your application is in a stabilized effect after the task has been added to your particular service. let's go ahead and click on Next step. So now, we have had our service. Let's go ahead and create our service. let's wait till the service creation is completed. here we are back. Our service has been created successfully. it just took a matter of seconds. You can go onto View service. 
+- And now, you have your service running. 
+- It's in the RUNNING state. 
+- And if you go on to Auto Scaling, you have now an auto scaling group that's attached to the service itself that's running the task in the background. in this video, we saw how to do auto scaling for both the task and the contain instances. 
+- Let's move on to our next chapter, which is monitoring your entire EC2 infrastructure.
+
+### Monitoring EC2
+- Hi and welcome back. in this video we're going to look at monitoring your entire EC2 infrastructure. 
+- So now, we can see the CPU and memory utilization for the cluster itself in the dashboard. if you've been paying attention to the videos, or been practicing yourself, you'll actually see this in the cluster homepage itself. Now, for each service you can see the events of the service. let's say your task is not running for any reason. In that particular service you can actually see the Events section. And that will actually give you really decent detail as to why your task is not running. you can actually use this to troubleshoot tasks which are either not running in your particular service. You can also see metrics for each service. And then finally, obviously, we have AWS CloudWatch. 
+- all the metrics for your clusters, for your resources, actually goes onto CloudWatch. And you can view the metrics for the CloudWatch. 
+- And then you can view the metrics for a cluster from the CloudWatch service. let's go on to the AWS console, and see how we can monitor our ECS cluster. 
+- here we are in the homepage for our cluster. I did mention that if you go on to the homepage itself for your cluster you'll get an overview of the CPU and the memory utilization for your cluster itself. 
+- Since we don't have much of a load on this particular cluster. we don't have much CPU and memory utilization.
+-  Let's go on to our Cluster itself. If you go on to the Services, and if you go on to Metrics, you can now see the metrics for each of your services, which run in your cluster. not only do you get an overall picture, which is on the Cluster screen of the CPU and memory utilization. And then you can go to each service and see what is the CPU and the memory utilization for that service itself. If you go on to the Tasks. let's go on to the Tasks. Right? anyway you can see what is the state of the task. You can also see when the task was created. let's say your task stops or starts for any reason. This date will be changed accordingly. Now, if you go back to the Services screen, and you click on your service. I didn't mention that thing about Events. Now, in your Events you can actually see details about what's happening in the background. if your service is not starting for any reason, it's not in this ready state, or if your task itself is not in the running status, you can actually see what's happening over here. when a task is running it will show okay the task has run. Or if the task is not running it will likely tell you a specific error. You can then go to the AWS documentation, query for that particular error, and see why the task is not running. this is a pretty useful screen for seeing details about the tasks in your particular service. As I said, obviously, we also have AWS CloudWatch. let's go back in another tab on to CloudWatch itself. here I'm going to the CloudWatch management dashboard. if you go on to metrics, right? You should be able to see an ECS matrix as well. here you can see based on your cluster name or the service name. here you can see the different services along with the cluster. you can see both the memory and the CPU utilization. here you can see both the memory and the CPU utilization over a period of time. if you want you can actually plot this out on a graph. And obviously, in CloudWatch you can share these graphs with other employees in your company. CloudWatch is anyway a place where you can actually see all the metrics which you have for AWS. And the Elastic Container Service is no less. you can also see the metrics which you have for the Elastic Container Service in the CloudWatch. we have wrapped up with the section where we've actually seen how to work with the Elastic Container Service. You've seen the benefits of, you know, the underlying infrastructure being managed for you. And you've seen how to work with tasks, services, auto scaling, and load balancing. Well, let's move on to the next section, which is Advanced Concepts.
+
+### Continuous Integration with Kubernetes
+- Hi and welcome back to this course. Now in this section, we are going to go to some of the advanced topics when it comes to managing Kubernetes clusters. in our first video, we're going to look at both Continuous Integration and continuous deployment with Kubernetes. let's go through the concepts in terms of Continuous Integration and deployment. first is Continuous Integration. this is where you ensure that updates to your code from various development pipelines are sent to a central build pipeline for your application. Now, the most popular source code configuration tool is Git. And a lot of continuous integration tools, such as Jenkins or even those on AWS, have this compatibility with this source code configuration tool. 
+- And Git is one of the most popular ones used in the development community. 
+- Now, continuous integration allows you to have an automated way to merge your code. 
+- But one of the more core aspects around this is that you need to have a good governance policy around this.
+-  Since you are doing an automated merge of your code, there are always possibilities that the wrong code much can occur. 
+- And this could have issues when you do your final deployment of your application. 
+- you need to have a proper governance around continuous integration. Next, we have the concept of Continuous Deployment. 
+- here we carry out an automated deployment of the artifacts on the different infrastructure components. 
+- So here, the code is tested and sent for deployment. 
+- One of the most important aspects is to ensure that you have both backup and recovery procedures in place. 
+- Since you are doing an automated deployment, there are a lot of things that can go wrong. 
+- Hence, it is very important to have your backup and recovery procedures in place. now we've looked at continuous integration and continuous deployment. 
+- this is known as the CI/CD pipeline. 
+- in the CI/CD pipeline you first have your source code versioning tool, such as Git. 
+- Here you make your Code Changes. 
+- Once you make a Code Changes they are sent to a Build pipeline. 
+- It is then tested. 
+- And then you Deploy your code. 
+- now we can have the same concept when it comes to a Kubernetes cluster. 
+- let's say again you make your Code Changes to your Git repository. You do a Build of your application. 
+- We then Push the application as a container. 
+- And then the container will be pushed to a Web Frontend pod in your Kubernetes cluster.
+-  And then you could do the same thing, which you do for your web frontend also for your Database Tier. 
+- for both of these pods in your cluster you can ensure that you have a separate CI/CD pipeline. 
+- Then next, when it comes to the cluster itself. 
+- I said you could have Pods which could point to an Older version of your images in Docker Hub. 
+- You could then have a Service which is pointing to this. 
+- When you are ready to make an application change, what you can do is that you can have new Pods which point to a newer version or new images in Docker Hub. 
+- And then you could have a new Service pointing to the new Pods. And then you could decommission the old service accordingly. 
+- This is the new concept when you're using continuous deployment. 
+- this is on a high level on how you can actually manage continuous integration and continuous deployment for your Kubernetes cluster.
+-  Let's move on to our next video, which is High Availability for Kubernetes Clusters.
+
+### High Availability for Kubernetes Clusters
+- Hi and welcome back. Now, in the second video in this section, we are going to look at the concept of how to have High Availability for Kubernetes Cluster. 
+- what are the key Points of Failure? 
+- when you look at the Kubernetes cluster and how we have actually set it up in the earlier chapters, what do you think are the points of failures or the core points of failures? Well, the first is obviously the master nodes. 
+- this is your control plane where you actually control the different worker nodes, on which the pods run. 
+- And the obviously, the next point of failure is your worker nodes. if either of these core components of the cluster fails, then your entire application fails. one of the core concepts is to ensure that both the master and the worker nodes are built for high availability. Now, when you're working on Kubernetes on AWS EC2, there are a lot of services which are available which can help you achieve high availability. 
+- the first thing is your Master Node. Never have a single node running. Have multiple nodes running on EC2 instances. 
+- And then what you can do is that the first thing you can do is place them in something known as an Auto Scaling Group. 
+- when you place them in an auto scaling group, the auto scaling group is responsible for ensuring that if any one of the master nodes fails, then it will spin up a new EC2 instance for your master node. 
+- Now, obviously you do have to bootstrap the EC2 instance accordingly to ensure that it works has part of your entire cluster setup. 
+- But what happens is this achieves high availability of your master nodes, because the auto scaling group will always ensure that a minimum number of master nodes will be running at any point in time. 
+- The same thing can also be done for your Worker Node. 
+- you have multiple Worker Nodes. 
+- And you place them as part of an Auto Scaling Group. 
+- Continuing on the lines of high availability for a cluster on AWS EC2. 
+- Now, in addition to having auto scaling group, you can also have an Elastic Load Balancer that can be used to distribute traffic from your users or outside world, on to your Master Nodes. 
+- By distributing traffic you can ensure that no one node in your cluster has a lot of load from your users or traffic. 
+- ensure to place an elastic load balancer if possible and required for your master nodes. 
+- And similarly, you can also have an Elastic Load Balancer for your Worker Nodes. 
+- Now, if you're managing Plain Kubernetes on your on-premise infrastructure then you need to use your own high availability software. 
+- You also need to ensure the storage is made highly available, along with the physical components that hosts your virtual service for your cluster. 
+- Now, I do recommend that if you're on the cloud environment to make use of what's available. 
+- in AWS I did mention that we have auto scaling groups and the Elastic Load Balancer. 
+- try to use these components to make your infrastructure highly available. 
+- Now, let's move on to our next video, which is looking at Disaster Recovery for Kubernetes Clusters.
+
+### Disaster Recovery For Kubernetes Clusters
+- Hi and welcome back. Now, in this video, we're going to look at the disaster recovery mechanisms for your Kubernetes clusters. the first scenario is your Node Replacement. what happens if one of your worker nodes becomes an issue? you need to kind of recover from that as soon as possible. 
+- Well, kubectl, so we've seen kubectl as one of the tools in the cluster, has a lot of useful components, which are available for this purpose. first is a tool called cordon. 
+- This can be used to mark a node has unscheduled, so that no new ports are deployed on that particular node. what happens when you do an automated deployment of your pods, the Kubernetes cluster actually ensures that these pods are, you know, pushed on to the worker nodes. But if you see a worker node as not healthy, then you need to ensure that no new pods are deployed on that worker node. 
+- this can be done with the help of the cordon tool. 
+- You also have another tool known as drain. This can be used to evict any existing pods from the worker nodes. 
+- once you've actually used a cordon and the drain tool to ensure that no pods are actually running on that particular node, you can then, you know, remove the node from the particular cluster. 
+- You can do your necessary investigation. 
+- And then you can replace the node accordingly after using the above tools. 
+- Now, when it comes to disaster recovery a key concept is automation. 
+- one can use automation tools, such as Ansible, Chef, etc. 
+- There are a lot of tools on the market. 
+- why would you actually want to use automation? 
+- Well, it's a faster way to ensure that your entire infrastructure is available in a secondary environment if your primary one fails.
+- If you are on AWS then you can use CloudFormation. 
+- you can develop a CloudFormation template that can be used to provision your infrastructure in a secondary region. 
+- So as I said, infrastructure automation can save a lot of time. 
+- Instead of you trying to build it manually whenever a disaster occurs in your primary environment, always look to have automation of your infrastructure in place. 
+- When it comes to automation of disaster recovery on AWS. 
+- let's say you have a cluster running in the US East Region. 
+- What you can do is that you can actually create a CloudFormation Template. 
+- And in case the US East Region becomes unavailable for any reason whatsoever, you can the CloudFormation Template to deploy your cluster in a separate region all together. 
+- Continuing on the lines of disaster recovery, you can also use another tool. let's say you have a Kubernetes cluster running in the US East Region. 
+- You have Route53 as your domain provider routing all the requests to this particular cluster. 
+- Let's say the cluster on the left-hand side in the US East Region is not available for any reason, you can then use Route53 to direct all of your requests to the US West Region. 
+- Route53 is a key component in AWS, which can be used to route traffic based on certain routing methods. 
+- In this, you would actually use something known as the failover routing method to ensure that requests go from one region to the other. 
+- When you're looking at your Disaster Recovery Strategy some important or core concepts. 
+- How much downtime can you afford? 
+    - That depends upon your stakeholders, your customers. 
+- How much revenue would you lose during downtime? 
+- this is an important aspect. 
+- How much can you invest in backup infrastructure? 
+    - Sometimes it's not easy for organizations to have a secondary environment running, so that you can do a quick failover. 
+    - Because what happens is that you are actually having an additional cost for keeping that backup infrastructure in place. 
+    - this can add up to your cost. 
+    - again how much investment can you make in backup is very important. 
+- But again, this is closely linked to how much revenue you would lose in the downtime. And always test your recovery procedure. you have a procedure in place to recover from a particular disaster, but you need to have drills in place. 
+- This could be on a quarterly or on a six-monthly basis to ensure that the recovery procedure works as desired. 
+
+### Summary. 
+- Docker containers and Kubernetes. 
+- How to build a cluster on Amazon EC2. 
+- Elastic Container Service, which is a service available in AWS itself for managing your containers. 
+- The advanced concepts when it comes to managing clusters. 

@@ -1,0 +1,13 @@
+## Event Driven System 
+- Kafka, 
+    - is a streaming platform
+    - emphasis on high throughput events and 
+    - stream processing. 
+- A Kafka cluster is 
+    - a distributed system at heart, 
+    - providing high availability, 
+    - storage, and 
+    - linear scale-out.
+- Kafka is designed to move data, 
+    - operating on that data as it does so.
+    - It’s about real-time processing first, long-term storage second.    
