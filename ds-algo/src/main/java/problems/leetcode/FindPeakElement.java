@@ -22,9 +22,9 @@ public class FindPeakElement {
     }
 
     public static void main(String[] args) {
-                int[] nums = new int[]{1, 2, 3, 4, 0};
+//                int[] nums = new int[]{1, 2, 3, 4, 0};
 //                int[] nums = new int[]{1, 1, 1, 1};
-//        int[] nums = new int[]{1, 1, 1, 3, 5, 6, 4};
+        int[] nums = new int[]{1, 1, 1, 3, 9, 5, 6, 7, 4};
         //        int[] nums = new int[]{1, 2};
         System.out.println(findPeakElement(nums));
     }
